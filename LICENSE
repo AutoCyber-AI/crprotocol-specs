@@ -1,0 +1,29 @@
+Creative Commons Attribution 4.0 International (CC BY 4.0)
+
+Copyright 2025–2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis
+
+You are free to:
+
+  Share — copy and redistribute the material in any medium or format
+  Adapt — implement, remix, transform, and build upon the material for any purpose, even commercially
+
+Under the following terms:
+
+  Attribution — You must give appropriate credit to AutoCyber AI Pty Ltd and Constantinos Vidiniotis,
+  provide a link to https://crprotocol.io and this repository, and indicate if changes were made.
+  You may do so in any reasonable manner, but not in any way that suggests the licensor endorses you
+  or your use.
+
+  No additional restrictions — You may not apply legal terms or technological measures that legally
+  restrict others from doing anything the license permits.
+
+Full license text: https://creativecommons.org/licenses/by/4.0/legalcode
+
+---
+
+Note: The CC BY 4.0 license applies to the SPECIFICATION TEXT in this repository only.
+
+The CRP reference implementation (the Python `crp` package, CRP Comply, and CRP Gateway) is
+separately licensed under the Elastic License 2.0 and is NOT covered by CC BY 4.0.
+
+See https://crprotocol.io/products/ for implementation licensing terms.

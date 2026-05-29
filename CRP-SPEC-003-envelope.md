@@ -1,12 +1,14 @@
+﻿<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright 2025-2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis -->
 # CRP-SPEC-003: Context Envelope & Packing Specification
 
 **Document:** CRP-SPEC-003  
-**Title:** Context Relay Protocol (CRP) — Context Envelope Construction & Packing Algorithm  
+**Title:** Context Relay Protocol (CRP) â€” Context Envelope Construction & Packing Algorithm  
 **Version:** 3.0.0  
 **Status:** Draft  
 **Author:** Constantinos Vidiniotis, AutoCyber AI Pty Ltd  
 **Contact:** contact@crprotocol.io  
-**Repository:** https://github.com/crprotocol/spec  
+**Repository:** https://github.com/AutoCyber-AI/crprotocol-specs  
 **Date:** 2026-05-24  
 **License:** CC BY 4.0 (specification text)  
 **Prerequisites:** CRP-SPEC-001 (Core), CRP-SPEC-002 (Headers), CRP-SPEC-009 (CKF)
@@ -15,7 +17,7 @@
 
 ## Abstract
 
-This document specifies the Context Envelope — the structured set of facts, knowledge fragments, and instructions assembled by the CRP gateway for injection into a large language model request. It defines the 3-phase packing algorithm (Select → Rank → Pack), the quality tier classification system, the saturation computation, the token budget model, and the conditional dispatch mechanism via ETag caching. The Context Envelope is the core mechanism by which CRP ensures that AI responses are grounded in verified, relevant, optimally-packed context rather than parametric memory.
+This document specifies the Context Envelope â€” the structured set of facts, knowledge fragments, and instructions assembled by the CRP gateway for injection into a large language model request. It defines the 3-phase packing algorithm (Select â†’ Rank â†’ Pack), the quality tier classification system, the saturation computation, the token budget model, and the conditional dispatch mechanism via ETag caching. The Context Envelope is the core mechanism by which CRP ensures that AI responses are grounded in verified, relevant, optimally-packed context rather than parametric memory.
 
 ---
 
@@ -46,9 +48,9 @@ This document specifies the Context Envelope — the structured set of facts, kn
 
 ### 1.1 The Context Quality Problem
 
-Large language models produce outputs whose accuracy is directly determined by the quality of context they receive. Research consistently demonstrates that models perform worse with larger context windows filled indiscriminately than with smaller, carefully curated context. The "lost in the middle" problem — where models fail to attend to information positioned in the middle of long contexts — persists across all frontier models as of 2026, with 11 out of 13 LLMs tested dropping below 50% of baseline scores at 32K tokens when surface-level pattern matching is removed.
+Large language models produce outputs whose accuracy is directly determined by the quality of context they receive. Research consistently demonstrates that models perform worse with larger context windows filled indiscriminately than with smaller, carefully curated context. The "lost in the middle" problem â€” where models fail to attend to information positioned in the middle of long contexts â€” persists across all frontier models as of 2026, with 11 out of 13 LLMs tested dropping below 50% of baseline scores at 32K tokens when surface-level pattern matching is removed.
 
-The Context Envelope addresses this by treating context construction as a first-class engineering discipline: facts are selected for relevance, ranked by importance, and packed to maximise information density within a defined token budget — before the LLM ever sees them.
+The Context Envelope addresses this by treating context construction as a first-class engineering discipline: facts are selected for relevance, ranked by importance, and packed to maximise information density within a defined token budget â€” before the LLM ever sees them.
 
 ### 1.2 Scope
 
@@ -74,7 +76,7 @@ This document does NOT cover:
 
 **Token Budget:** The maximum number of tokens available for the Context Envelope within the LLM's context window, after reserving space for the system prompt, user query, and expected response length.
 
-**Saturation:** The ratio of token budget consumed by the envelope (0.0 – 1.0).
+**Saturation:** The ratio of token budget consumed by the envelope (0.0 â€“ 1.0).
 
 **Quality Tier:** The classification (S, A, B, C, D) reflecting the completeness and relevance of the assembled envelope.
 
@@ -113,8 +115,8 @@ Fact {
   fact_id:             string       // Unique identifier
   content:             string       // The fact text
   source_id:           string       // Origin document / source reference
-  relevance_score:     float        // 0.0 – 1.0, computed per-query
-  importance_weight:   float        // 0.0 – 1.0, intrinsic to fact
+  relevance_score:     float        // 0.0 â€“ 1.0, computed per-query
+  importance_weight:   float        // 0.0 â€“ 1.0, intrinsic to fact
   composite_score:     float        // Combined ranking score
   token_count:         integer      // Tokens consumed by this fact
   position:            integer      // Position in envelope (1-indexed)
@@ -127,37 +129,37 @@ Fact {
 
 ## 4. The 3-Phase Packing Algorithm
 
-The packing algorithm operates in three sequential phases. Each phase narrows the candidate set and optimises the output. The algorithm is deterministic given the same input query and CKF state — producing the same envelope hash (ETag) and enabling conditional dispatch.
+The packing algorithm operates in three sequential phases. Each phase narrows the candidate set and optimises the output. The algorithm is deterministic given the same input query and CKF state â€” producing the same envelope hash (ETag) and enabling conditional dispatch.
 
 ```
-                    ┌─────────────────────────┐
-                    │     User Query           │
-                    │     CKF State            │
-                    │     Token Budget         │
-                    └───────────┬─────────────┘
-                                │
-                    ┌───────────▼─────────────┐
-                    │   PHASE 1: SELECT        │
-                    │   Retrieval from CKF     │
-                    │   Candidate generation   │
-                    │   Output: N candidates   │
-                    └───────────┬─────────────┘
-                                │
-                    ┌───────────▼─────────────┐
-                    │   PHASE 2: RANK          │
-                    │   Relevance scoring      │
-                    │   Importance weighting   │
-                    │   Deduplication          │
-                    │   Output: Ordered list   │
-                    └───────────┬─────────────┘
-                                │
-                    ┌───────────▼─────────────┐
-                    │   PHASE 3: PACK          │
-                    │   Token budget fitting   │
-                    │   Position optimisation  │
-                    │   Quality assessment     │
-                    │   Output: Envelope       │
-                    └─────────────────────────┘
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚     User Query           â”‚
+                    â”‚     CKF State            â”‚
+                    â”‚     Token Budget         â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚   PHASE 1: SELECT        â”‚
+                    â”‚   Retrieval from CKF     â”‚
+                    â”‚   Candidate generation   â”‚
+                    â”‚   Output: N candidates   â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚   PHASE 2: RANK          â”‚
+                    â”‚   Relevance scoring      â”‚
+                    â”‚   Importance weighting   â”‚
+                    â”‚   Deduplication          â”‚
+                    â”‚   Output: Ordered list   â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                                â”‚
+                    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+                    â”‚   PHASE 3: PACK          â”‚
+                    â”‚   Token budget fitting   â”‚
+                    â”‚   Position optimisation  â”‚
+                    â”‚   Quality assessment     â”‚
+                    â”‚   Output: Envelope       â”‚
+                    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -166,25 +168,25 @@ The packing algorithm operates in three sequential phases. Each phase narrows th
 
 ### 5.1 Purpose
 
-Phase 1 generates the candidate fact set from the CKF. It casts a wide net — retrieving more facts than will ultimately fit in the envelope, ensuring comprehensive coverage before ranking narrows the set.
+Phase 1 generates the candidate fact set from the CKF. It casts a wide net â€” retrieving more facts than will ultimately fit in the envelope, ensuring comprehensive coverage before ranking narrows the set.
 
 ### 5.2 Retrieval Process
 
-**Step 1.1 — Query decomposition:** The user query is decomposed into constituent sub-queries when it contains multiple distinct information needs. A query "Compare the EU AI Act and GDPR approaches to automated decision-making" decomposes into: ["EU AI Act automated decision-making"], ["GDPR automated decision-making"], ["EU AI Act vs GDPR comparison"].
+**Step 1.1 â€” Query decomposition:** The user query is decomposed into constituent sub-queries when it contains multiple distinct information needs. A query "Compare the EU AI Act and GDPR approaches to automated decision-making" decomposes into: ["EU AI Act automated decision-making"], ["GDPR automated decision-making"], ["EU AI Act vs GDPR comparison"].
 
-**Step 1.2 — Vector retrieval:** Each sub-query is embedded using the same embedding model as the CKF index. The HNSW index (see CRP-SPEC-009) retrieves the top-K nearest neighbours for each sub-query embedding. Default K = 50 per sub-query.
+**Step 1.2 â€” Vector retrieval:** Each sub-query is embedded using the same embedding model as the CKF index. The HNSW index (see CRP-SPEC-009) retrieves the top-K nearest neighbours for each sub-query embedding. Default K = 50 per sub-query.
 
-**Step 1.3 — Community expansion:** For each retrieved fact, the Leiden community label is checked. If a community is partially represented (fewer than 3 facts from a community that has 10+ facts within retrieval distance), the retrieval expands to include additional facts from that community. This prevents the "island" problem where semantically related facts are split across communities and only partially retrieved.
+**Step 1.3 â€” Community expansion:** For each retrieved fact, the Leiden community label is checked. If a community is partially represented (fewer than 3 facts from a community that has 10+ facts within retrieval distance), the retrieval expands to include additional facts from that community. This prevents the "island" problem where semantically related facts are split across communities and only partially retrieved.
 
-**Step 1.4 — Memory tier cascade:** Retrieval cascades through the memory hierarchy:
-- Tier 0 (Active): Facts from the current context window — already present, no retrieval needed
-- Tier 1 (Hot): Facts from the session cache — prior windows in this session
+**Step 1.4 â€” Memory tier cascade:** Retrieval cascades through the memory hierarchy:
+- Tier 0 (Active): Facts from the current context window â€” already present, no retrieval needed
+- Tier 1 (Hot): Facts from the session cache â€” prior windows in this session
 - Tier 2 (Warm): Recently accessed CKF subgraphs
 - Tier 3 (Cold): Full CKF graph HNSW search
 
 The highest tier accessed is recorded as `memory_tier_hit`.
 
-**Step 1.5 — Candidate set output:** The union of all retrieved facts, deduplicated by `fact_id`, forms the candidate set. Typically 100–500 candidate facts for a complex query.
+**Step 1.5 â€” Candidate set output:** The union of all retrieved facts, deduplicated by `fact_id`, forms the candidate set. Typically 100â€“500 candidate facts for a complex query.
 
 ### 5.3 CKF Cache Check
 
@@ -203,10 +205,10 @@ Phase 2 scores and orders the candidate facts, producing a ranked list where pos
 Each candidate fact receives a composite score:
 
 ```
-composite_score = (relevance_score × relevance_weight) +
-                  (importance_weight × importance_factor) +
-                  (freshness_score × freshness_weight) +
-                  (diversity_bonus × diversity_weight)
+composite_score = (relevance_score Ã— relevance_weight) +
+                  (importance_weight Ã— importance_factor) +
+                  (freshness_score Ã— freshness_weight) +
+                  (diversity_bonus Ã— diversity_weight)
 ```
 
 **Default weights (configurable per CRP gateway deployment):**
@@ -215,7 +217,7 @@ composite_score = (relevance_score × relevance_weight) +
 |-----------|---------------|-------------|
 | `relevance_weight` | 0.50 | Cosine similarity between query embedding and fact embedding |
 | `importance_factor` | 0.25 | Intrinsic importance of the fact (source authority, citation count, manual annotation) |
-| `freshness_weight` | 0.15 | Recency score — newer facts scored higher for time-sensitive queries |
+| `freshness_weight` | 0.15 | Recency score â€” newer facts scored higher for time-sensitive queries |
 | `diversity_weight` | 0.10 | Bonus for facts from underrepresented communities, preventing single-source dominance |
 
 ### 6.3 Relevance Score Computation
@@ -238,7 +240,7 @@ age_days = (current_time - fact.ingested_at).total_days()
 freshness_score = max(0.0, 1.0 - (age_days / freshness_horizon))
 ```
 
-Default `freshness_horizon` = 365 days. Facts older than the horizon receive freshness_score = 0.0 (but are NOT excluded — importance and relevance may still justify inclusion).
+Default `freshness_horizon` = 365 days. Facts older than the horizon receive freshness_score = 0.0 (but are NOT excluded â€” importance and relevance may still justify inclusion).
 
 For queries containing temporal indicators ("current", "latest", "2026", "this year"), `freshness_horizon` is reduced to 90 days and `freshness_weight` is increased to 0.25 (with `relevance_weight` reduced to 0.40).
 
@@ -349,7 +351,7 @@ etag_input = "|".join(fact_ids_sorted) + "|" + str(len(envelope))
 etag = "sha256:" + SHA256(etag_input).hexdigest()
 ```
 
-The ETag is deterministic: the same set of facts (regardless of order) produces the same ETag. This enables conditional dispatch — if the CKF hasn't changed and the query decomposition is identical, the ETag will match.
+The ETag is deterministic: the same set of facts (regardless of order) produces the same ETag. This enables conditional dispatch â€” if the CKF hasn't changed and the query decomposition is identical, the ETag will match.
 
 ---
 
@@ -364,20 +366,20 @@ coverage_score = total_facts_included / total_facts_available
 saturation = tokens_used / token_budget
 relevance_mean = mean([f.relevance_score for f in envelope])
 
-quality_score = (coverage_score × 0.35) +
-                (saturation × 0.30) +
-                (relevance_mean × 0.35)
+quality_score = (coverage_score Ã— 0.35) +
+                (saturation Ã— 0.30) +
+                (relevance_mean Ã— 0.35)
 ```
 
 ### 8.2 Tier Thresholds
 
 | Tier | Quality Score | Saturation Range | Meaning |
 |------|-------------|------------------|---------|
-| `S` | ≥ 0.95 | ≥ 0.99 | Superior — all critical facts included, optimal relevance |
-| `A` | ≥ 0.85 | ≥ 0.95 | High — comprehensive coverage with minor gaps |
-| `B` | ≥ 0.70 | ≥ 0.85 | Adequate — majority of relevant facts included |
-| `C` | ≥ 0.50 | ≥ 0.70 | Marginal — significant gaps in relevant coverage |
-| `D` | < 0.50 | < 0.70 | Deficient — critical facts missing or insufficient context |
+| `S` | â‰¥ 0.95 | â‰¥ 0.99 | Superior â€” all critical facts included, optimal relevance |
+| `A` | â‰¥ 0.85 | â‰¥ 0.95 | High â€” comprehensive coverage with minor gaps |
+| `B` | â‰¥ 0.70 | â‰¥ 0.85 | Adequate â€” majority of relevant facts included |
+| `C` | â‰¥ 0.50 | â‰¥ 0.70 | Marginal â€” significant gaps in relevant coverage |
+| `D` | < 0.50 | < 0.70 | Deficient â€” critical facts missing or insufficient context |
 
 ### 8.3 Tier Override Rules
 
@@ -385,7 +387,7 @@ The following conditions override the computed tier downward:
 
 | Condition | Maximum Tier |
 |-----------|-------------|
-| Any critical fact (importance_weight ≥ 0.90) excluded due to budget | B |
+| Any critical fact (importance_weight â‰¥ 0.90) excluded due to budget | B |
 | Coverage score < 0.30 | D |
 | Zero facts from the primary Leiden community | C |
 | Freshness check failed (query is time-sensitive but newest fact > 90 days) | C |
@@ -414,20 +416,20 @@ saturation = tokens_used / token_budget
 
 | Saturation | Interpretation |
 |-----------|---------------|
-| 0.99 – 1.00 | Fully saturated — envelope used maximum available context |
-| 0.95 – 0.98 | Near-saturated — minor space remaining |
-| 0.85 – 0.94 | Well-packed — good utilisation with headroom |
-| 0.70 – 0.84 | Moderate — significant unused budget (may indicate limited CKF coverage) |
-| < 0.70 | Sparse — CKF has limited relevant content for this query |
+| 0.99 â€“ 1.00 | Fully saturated â€” envelope used maximum available context |
+| 0.95 â€“ 0.98 | Near-saturated â€” minor space remaining |
+| 0.85 â€“ 0.94 | Well-packed â€” good utilisation with headroom |
+| 0.70 â€“ 0.84 | Moderate â€” significant unused budget (may indicate limited CKF coverage) |
+| < 0.70 | Sparse â€” CKF has limited relevant content for this query |
 
 ### 9.3 Saturation-Driven Behaviour
 
-When saturation is **high** (≥ 0.95):
+When saturation is **high** (â‰¥ 0.95):
 - Gateway SHOULD set `CRP-Context-Cache: reuse-ckf` to avoid re-packing on continuation windows
 - Gateway SHOULD consider dispatching a continuation window if the query requires more context than a single window can hold
 
 When saturation is **low** (< 0.70):
-- Quality tier is capped at C (see §8.3)
+- Quality tier is capped at C (see Â§8.3)
 - If `CRP-LLM-Grounding-Mode: context-strict` is set, the gateway SHOULD warn the client that strict grounding may produce incomplete answers
 - Gateway SHOULD emit `CRP-Context-Cache-Status: PARTIAL; reason=limited-ckf-coverage`
 
@@ -455,7 +457,7 @@ CRP-Context-Facts-Used: 47/312
 
 ### 10.3 Budget Pressure Signals
 
-When the token budget is under pressure (saturation ≥ 0.98 and additional relevant facts remain unpacked), the gateway SHOULD:
+When the token budget is under pressure (saturation â‰¥ 0.98 and additional relevant facts remain unpacked), the gateway SHOULD:
 
 1. Set `CRP-Context-Continuation-Id` to signal that a continuation window is available
 2. Record the unpacked but relevant facts as "deferred" for the next window
@@ -473,23 +475,23 @@ Conditional dispatch allows the gateway to skip envelope reconstruction when the
 
 ```
 Client                          Gateway                         CKF
-  │                                │                              │
-  │── GET /dispatch ──────────────►│                              │
-  │   CRP-Context-If-Match: sha256:abc...                        │
-  │                                │                              │
-  │                                │── Check ETag ───────────────►│
-  │                                │◄── Match / No Match ─────────│
-  │                                │                              │
-  │   [If Match]                   │                              │
-  │◄── 304 Not Modified ──────────│                              │
-  │    CRP-Context-ETag: sha256:abc...                           │
-  │    CRP-Context-Cache-Status: HIT                             │
-  │                                │                              │
-  │   [If No Match]                │                              │
-  │                                │── Run 3-Phase Pack ─────────►│
-  │◄── 200 OK ────────────────────│                              │
-  │    CRP-Context-ETag: sha256:NEW...                           │
-  │    CRP-Context-Cache-Status: MISS; reason=facts-updated      │
+  â”‚                                â”‚                              â”‚
+  â”‚â”€â”€ GET /dispatch â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–ºâ”‚                              â”‚
+  â”‚   CRP-Context-If-Match: sha256:abc...                        â”‚
+  â”‚                                â”‚                              â”‚
+  â”‚                                â”‚â”€â”€ Check ETag â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â–ºâ”‚
+  â”‚                                â”‚â—„â”€â”€ Match / No Match â”€â”€â”€â”€â”€â”€â”€â”€â”€â”‚
+  â”‚                                â”‚                              â”‚
+  â”‚   [If Match]                   â”‚                              â”‚
+  â”‚â—„â”€â”€ 304 Not Modified â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”‚                              â”‚
+  â”‚    CRP-Context-ETag: sha256:abc...                           â”‚
+  â”‚    CRP-Context-Cache-Status: HIT                             â”‚
+  â”‚                                â”‚                              â”‚
+  â”‚   [If No Match]                â”‚                              â”‚
+  â”‚                                â”‚â”€â”€ Run 3-Phase Pack â”€â”€â”€â”€â”€â”€â”€â”€â”€â–ºâ”‚
+  â”‚â—„â”€â”€ 200 OK â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”‚                              â”‚
+  â”‚    CRP-Context-ETag: sha256:NEW...                           â”‚
+  â”‚    CRP-Context-Cache-Status: MISS; reason=facts-updated      â”‚
 ```
 
 ### 11.3 ETag Validity
@@ -499,15 +501,15 @@ An ETag remains valid as long as:
 - No facts have been deleted or modified
 - The CKF community structure has not been recomputed (Leiden reclustering)
 
-ETag validity is checked by comparing the presented hash against the current `CKF_state_hash` — a rolling hash of all fact IDs and their modification timestamps within the relevant communities.
+ETag validity is checked by comparing the presented hash against the current `CKF_state_hash` â€” a rolling hash of all fact IDs and their modification timestamps within the relevant communities.
 
 ### 11.4 Interaction with Cache-Control
 
 | Client sends | ETag matches? | Behaviour |
 |-------------|---------------|-----------|
-| `CRP-Context-If-Match` only | Yes | 304 — skip reconstruction |
+| `CRP-Context-If-Match` only | Yes | 304 â€” skip reconstruction |
 | `CRP-Context-If-Match` only | No | Full reconstruction, new ETag |
-| `CRP-Context-Cache: no-cache` + `If-Match` | N/A | `no-cache` overrides — full reconstruction regardless |
+| `CRP-Context-Cache: no-cache` + `If-Match` | N/A | `no-cache` overrides â€” full reconstruction regardless |
 | `CRP-Context-Cache: reuse-ckf` | N/A | Read CKF but do not re-ingest sources |
 | `CRP-Context-Cache: only-if-ckf` | N/A | Return 424 if CKF has no relevant facts |
 
@@ -517,7 +519,7 @@ ETag validity is checked by comparing the presented hash against the current `CK
 
 ### 12.1 Purpose
 
-Before full dispatch, the gateway generates an Envelope Preview — a lightweight assessment of what the envelope will contain, without running the LLM call. This is exposed in headers on the full response and also available as a standalone API call for cost estimation.
+Before full dispatch, the gateway generates an Envelope Preview â€” a lightweight assessment of what the envelope will contain, without running the LLM call. This is exposed in headers on the full response and also available as a standalone API call for cost estimation.
 
 ### 12.2 Preview Fields
 
@@ -554,7 +556,7 @@ Every preview field maps to a response header:
 
 ### 13.1 How Grounding Mode Affects Packing
 
-The `CRP-LLM-Grounding-Mode` header (see CRP-SPEC-002 §11.2) affects the system prompt injected alongside the envelope:
+The `CRP-LLM-Grounding-Mode` header (see CRP-SPEC-002 Â§11.2) affects the system prompt injected alongside the envelope:
 
 | Mode | System Prompt Addition | Packing Impact |
 |------|----------------------|----------------|
@@ -588,13 +590,13 @@ Facts included in Window N MUST NOT be re-included in Window N+1 unless their co
 
 ### 14.3 Envelope State in Session Token
 
-The `CRP-Set-Session` token carries `QualityHistory` — the quality tier of each window in the session. This enables the client and the gateway to track quality degradation across a continuation chain:
+The `CRP-Set-Session` token carries `QualityHistory` â€” the quality tier of each window in the session. This enables the client and the gateway to track quality degradation across a continuation chain:
 
 ```
 CRP-Set-Session: ...; QualityHistory=A,A,B
 ```
 
-If quality is degrading (A → B → C), the gateway SHOULD:
+If quality is degrading (A â†’ B â†’ C), the gateway SHOULD:
 - Recommend switching to `dispatch_hierarchical()` (aggregation strategy)
 - Emit a warning in the audit trail
 - Consider that the CKF may lack depth for this knowledge domain
@@ -607,15 +609,15 @@ The following CRP response headers are populated by the envelope packing algorit
 
 | Header | Source |
 |--------|--------|
-| `CRP-Context-Quality-Tier` | §8 Quality Tier Classification |
-| `CRP-Context-Saturation` | §9 Saturation Model |
+| `CRP-Context-Quality-Tier` | Â§8 Quality Tier Classification |
+| `CRP-Context-Saturation` | Â§9 Saturation Model |
 | `CRP-Context-Facts-Used` | Phase 3 output (included/available) |
 | `CRP-Context-Tokens-Used` | Phase 3 token counting |
-| `CRP-Context-ETag` | §7.5 ETag Computation |
-| `CRP-Context-Cache-Status` | §11 Conditional Dispatch |
+| `CRP-Context-ETag` | Â§7.5 ETag Computation |
+| `CRP-Context-Cache-Status` | Â§11 Conditional Dispatch |
 | `CRP-Context-Strategy` | Strategy selection |
 | `CRP-Context-Window` | Window position in continuation chain |
-| `CRP-Context-Continuation-Id` | §14 Multi-Window continuation |
+| `CRP-Context-Continuation-Id` | Â§14 Multi-Window continuation |
 | `CRP-Memory-Tier-Hit` | Phase 1 memory tier cascade |
 | `CRP-Memory-CKF-Hits` | Phase 1 CKF retrieval count |
 | `CRP-Memory-CKF-Community` | Phase 1 community expansion |
@@ -647,7 +649,7 @@ The ETag hash reveals whether the CKF state has changed between calls. In advers
 
 ### 17.1 PII in the Envelope
 
-The CKF may contain facts derived from documents containing personal data. The packing algorithm does not filter PII — it packs by relevance and importance regardless of content type. PII detection is handled by the DPE (CRP-SPEC-005) after the LLM response, not during packing.
+The CKF may contain facts derived from documents containing personal data. The packing algorithm does not filter PII â€” it packs by relevance and importance regardless of content type. PII detection is handled by the DPE (CRP-SPEC-005) after the LLM response, not during packing.
 
 If `CRP-Context-Cache: no-store` is set, facts from this session MUST NOT be persisted to the CKF, preventing PII from entering the long-term knowledge graph.
 
@@ -661,18 +663,18 @@ When a customer exercises GDPR Art. 17 (right to erasure), all facts derived fro
 
 ### Normative References
 
-- CRP-SPEC-001 — Core Protocol Specification
-- CRP-SPEC-002 — Header Field Specification
-- CRP-SPEC-004 — Window Continuation & DAG
-- CRP-SPEC-005 — Decision Provenance Engine
-- CRP-SPEC-009 — Contextual Knowledge Fabric
+- CRP-SPEC-001 â€” Core Protocol Specification
+- CRP-SPEC-002 â€” Header Field Specification
+- CRP-SPEC-004 â€” Window Continuation & DAG
+- CRP-SPEC-005 â€” Decision Provenance Engine
+- CRP-SPEC-009 â€” Contextual Knowledge Fabric
 
 ### Informative References
 
-- "Lost in the Middle: How Language Models Use Long Contexts" — Liu et al., 2023
-- "NoLiMa: Long-context Evaluation Beyond Literal Matching" — LMU Munich / Adobe, ICML 2025
-- "Chroma Research: Effective Context Window Evaluation" — 2025
+- "Lost in the Middle: How Language Models Use Long Contexts" â€” Liu et al., 2023
+- "NoLiMa: Long-context Evaluation Beyond Literal Matching" â€” LMU Munich / Adobe, ICML 2025
+- "Chroma Research: Effective Context Window Evaluation" â€” 2025
 
 ---
 
-*Copyright © 2025–2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0 (specification text). CRP™ is a trademark of AutoCyber AI Pty Ltd.*
+*Copyright Â© 2025â€“2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0 (specification text). CRPâ„¢ is a trademark of AutoCyber AI Pty Ltd.*

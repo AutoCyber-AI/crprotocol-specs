@@ -1,7 +1,9 @@
+﻿<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright 2025-2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis -->
 # CRP-SPEC-011: Audit Trail & HMAC Chain Specification
 
 **Document:** CRP-SPEC-011  
-**Title:** Context Relay Protocol (CRP) — Audit Trail & HMAC Chain  
+**Title:** Context Relay Protocol (CRP) â€” Audit Trail & HMAC Chain  
 **Version:** 3.0.0  
 **Status:** Draft  
 **Author:** Constantinos Vidiniotis, AutoCyber AI Pty Ltd  
@@ -13,7 +15,7 @@
 
 ## Abstract
 
-This document specifies the CRP audit trail — the tamper-evident, HMAC-SHA256-chained log of every event in a CRP session. It defines the 30+ event types, the HMAC chain algorithm, the chain verification procedure, export formats, and the integration with CRP Comply for regulatory evidence generation.
+This document specifies the CRP audit trail â€” the tamper-evident, HMAC-SHA256-chained log of every event in a CRP session. It defines the 30+ event types, the HMAC chain algorithm, the chain verification procedure, export formats, and the integration with CRP Comply for regulatory evidence generation.
 
 ---
 
@@ -57,7 +59,7 @@ Each audit event has a type, severity, and a set of fields specific to that type
 | Event Type | Trigger | Severity | Key Fields |
 |-----------|---------|----------|------------|
 | `SAFETY_HALT` | HTTP 451 returned due to policy | CRITICAL | risk_level, policy_directive_violated, audit_trail_uri |
-| `SAFETY_BUDGET_DEPLETED` | Budget ≤ 0.10, oversight escalated | CRITICAL | remaining_budget, windows_processed |
+| `SAFETY_BUDGET_DEPLETED` | Budget â‰¤ 0.10, oversight escalated | CRITICAL | remaining_budget, windows_processed |
 | `OVERSIGHT_TRIGGERED` | Human review mode activated | WARN | trigger_reason, oversight_mode |
 | `POLICY_VIOLATION` | Safety Policy directive violated | WARN | directive, violation_details |
 
@@ -105,7 +107,7 @@ event_hmac = HMAC-SHA256(
   || event_data_hash            // SHA-256 of the event's key fields (JSON-serialised)
   || window_id
   || previous_event_hmac,       // Chain link (empty string for first event)
-  session_hmac_key              // Derived via HKDF per CRP-SPEC-015 §3.1
+  session_hmac_key              // Derived via HKDF per CRP-SPEC-015 Â§3.1
 )
 ```
 
@@ -132,11 +134,11 @@ window_hmac = HMAC-SHA256(
 )
 ```
 
-This is the value emitted as `CRP-Provenance-HMAC` (CRP-SPEC-002 §6.1).
+This is the value emitted as `CRP-Provenance-HMAC` (CRP-SPEC-002 Â§6.1).
 
 ### 2.4 Fan-In HMAC Merge
 
-See CRP-SPEC-004 §9.3 for the fan-in HMAC algorithm (sorted parent HMACs, joined and hashed).
+See CRP-SPEC-004 Â§9.3 for the fan-in HMAC algorithm (sorted parent HMACs, joined and hashed).
 
 ---
 
@@ -177,7 +179,7 @@ The verification result is emitted as `CRP-Provenance-Chain-Integrity`:
 | Value | Meaning |
 |-------|---------|
 | `VALID` | Full chain verified from root to current window |
-| `BROKEN` | Verification failed — possible tampering |
+| `BROKEN` | Verification failed â€” possible tampering |
 | `PARTIAL` | Window-level verification passed; full chain not checked |
 | `UNVERIFIED` | First window of session (no previous to chain from) |
 
@@ -265,12 +267,12 @@ CRP Comply receives the events and:
 
 ## 7. References
 
-- CRP-SPEC-001 — Core Protocol Specification
-- CRP-SPEC-004 — Window Continuation & DAG
-- CRP-SPEC-015 — Security & Privacy
-- RFC 2104 — HMAC
-- OCSF v1.1.0 — Open Cybersecurity Schema Framework
+- CRP-SPEC-001 â€” Core Protocol Specification
+- CRP-SPEC-004 â€” Window Continuation & DAG
+- CRP-SPEC-015 â€” Security & Privacy
+- RFC 2104 â€” HMAC
+- OCSF v1.1.0 â€” Open Cybersecurity Schema Framework
 
 ---
 
-*Copyright © 2025–2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0. CRP™ is a trademark of AutoCyber AI Pty Ltd.*
+*Copyright Â© 2025â€“2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0. CRPâ„¢ is a trademark of AutoCyber AI Pty Ltd.*

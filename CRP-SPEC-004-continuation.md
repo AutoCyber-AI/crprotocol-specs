@@ -1,12 +1,14 @@
+﻿<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright 2025-2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis -->
 # CRP-SPEC-004: Window Continuation & DAG Specification
 
 **Document:** CRP-SPEC-004  
-**Title:** Context Relay Protocol (CRP) — Window Continuation, Context Enlargement & Directed Acyclic Graph  
+**Title:** Context Relay Protocol (CRP) â€” Window Continuation, Context Enlargement & Directed Acyclic Graph  
 **Version:** 3.0.0  
 **Status:** Draft  
 **Author:** Constantinos Vidiniotis, AutoCyber AI Pty Ltd  
 **Contact:** contact@crprotocol.io  
-**Repository:** https://github.com/crprotocol/spec  
+**Repository:** https://github.com/AutoCyber-AI/crprotocol-specs  
 **Date:** 2026-05-24  
 **License:** CC BY 4.0 (specification text)  
 **Prerequisites:** CRP-SPEC-001 (Core), CRP-SPEC-002 (Headers), CRP-SPEC-003 (Envelope)
@@ -15,7 +17,7 @@
 
 ## Abstract
 
-This document specifies the Window Continuation mechanism — CRP's approach to extending effective AI context beyond a single model's token limit by chaining multiple dispatch calls into a directed acyclic graph (DAG). It defines the Window DAG structure, continuation pointer semantics, fan-out/fan-in patterns for parallel agent dispatch, cross-window provenance stitching via HMAC chain extension, and the session token state relay that enables stateless context continuity across language boundaries and gateway instances.
+This document specifies the Window Continuation mechanism â€” CRP's approach to extending effective AI context beyond a single model's token limit by chaining multiple dispatch calls into a directed acyclic graph (DAG). It defines the Window DAG structure, continuation pointer semantics, fan-out/fan-in patterns for parallel agent dispatch, cross-window provenance stitching via HMAC chain extension, and the session token state relay that enables stateless context continuity across language boundaries and gateway instances.
 
 ---
 
@@ -46,17 +48,17 @@ This document specifies the Window Continuation mechanism — CRP's approach to 
 
 ### 1.1 The Context Enlargement Problem
 
-A single LLM call is bounded by its context window — typically 128K–200K tokens for frontier models in 2026. Many real-world tasks require more context than a single window can hold: multi-document analysis, extended agentic sessions, iterative research workflows, and cross-domain synthesis.
+A single LLM call is bounded by its context window â€” typically 128Kâ€“200K tokens for frontier models in 2026. Many real-world tasks require more context than a single window can hold: multi-document analysis, extended agentic sessions, iterative research workflows, and cross-domain synthesis.
 
-CRP solves this through **continuation windows** — a chain of LLM calls where each call builds on the context and outputs of prior calls, maintaining provenance integrity, quality tracking, and safety budget across the entire chain.
+CRP solves this through **continuation windows** â€” a chain of LLM calls where each call builds on the context and outputs of prior calls, maintaining provenance integrity, quality tracking, and safety budget across the entire chain.
 
 ### 1.2 Why a DAG, Not a Linear Chain
 
-A linear chain (Window 1 → Window 2 → Window 3) is the simplest continuation model but insufficient for complex workflows:
+A linear chain (Window 1 â†’ Window 2 â†’ Window 3) is the simplest continuation model but insufficient for complex workflows:
 
 - **Fan-out:** An orchestrator agent dispatches three specialist agents simultaneously, each with its own continuation chain. This is a tree, not a line.
-- **Fan-in:** The results of the three specialists are merged back into a single synthesis window. This creates a convergence point — a DAG node with multiple parents.
-- **Branching:** A reflexive dispatch (verify → refine) creates a branch where Window 2a (verification) and Window 2b (refinement) are siblings, not sequential.
+- **Fan-in:** The results of the three specialists are merged back into a single synthesis window. This creates a convergence point â€” a DAG node with multiple parents.
+- **Branching:** A reflexive dispatch (verify â†’ refine) creates a branch where Window 2a (verification) and Window 2b (refinement) are siblings, not sequential.
 
 The DAG structure accommodates all these patterns while maintaining a single provenance chain root.
 
@@ -66,7 +68,7 @@ The DAG structure accommodates all these patterns while maintaining a single pro
 
 **Window:** A single AI call within a CRP session. Each window has a unique identifier, a Context Envelope, an LLM response, a DPE analysis, and an HMAC hash.
 
-**Window DAG:** The directed acyclic graph connecting all windows in a session. Edges represent context flow — a child window received context derived from its parent(s).
+**Window DAG:** The directed acyclic graph connecting all windows in a session. Edges represent context flow â€” a child window received context derived from its parent(s).
 
 **Continuation Pointer:** An opaque token (`CRP-Context-Continuation-Id`) that references a specific window in the DAG, enabling a subsequent call to resume from that point.
 
@@ -74,7 +76,7 @@ The DAG structure accommodates all these patterns while maintaining a single pro
 
 **Fan-In:** A pattern where multiple parent windows merge their results into a single child window.
 
-**Linear Continuation:** The simplest pattern: Window 1 → Window 2 → Window 3, each building sequentially on the previous.
+**Linear Continuation:** The simplest pattern: Window 1 â†’ Window 2 â†’ Window 3, each building sequentially on the previous.
 
 **Session Root:** The first window in the DAG. Its HMAC is the anchor for the entire chain.
 
@@ -142,10 +144,10 @@ The Window DAG MUST satisfy these invariants at all times:
 1. Client sends first request to gateway (no CRP-Context-Continuation-Id)
 2. Gateway creates session:
    - Generates session_id
-   - Generates session HMAC key via HKDF (see CRP-SPEC-015 §3.1)
+   - Generates session HMAC key via HKDF (see CRP-SPEC-015 Â§3.1)
    - Creates root WindowNode (window_number=1)
-   - Runs 3-phase packing → Envelope → LLM dispatch → DPE
-   - Computes Window 1 HMAC (no previous HMAC — chain starts here)
+   - Runs 3-phase packing â†’ Envelope â†’ LLM dispatch â†’ DPE
+   - Computes Window 1 HMAC (no previous HMAC â€” chain starts here)
 3. Gateway responds with:
    - CRP-Context-Session-Id: crp_sess_...
    - CRP-Context-Window: 1/5
@@ -163,7 +165,7 @@ The Window DAG MUST satisfy these invariants at all times:
    - CRP-Session-Token: (from CRP-Set-Session)
    - (Optional) CRP-Context-Cache: reuse-ckf
 2. Gateway validates session token (signature, expiry, scope)
-3. Gateway resolves continuation pointer → finds Window 1 in DAG
+3. Gateway resolves continuation pointer â†’ finds Window 1 in DAG
 4. Gateway creates Window 2 as child of Window 1
 5. Gateway runs 3-phase packing with:
    - Deferred facts from Window 1 (facts that didn't fit)
@@ -184,7 +186,7 @@ The Window DAG MUST satisfy these invariants at all times:
 A session ends when:
 - The client stops sending continuation requests
 - The maximum window depth is reached (default: 5)
-- The safety budget is depleted (≤ 0.00)
+- The safety budget is depleted (â‰¤ 0.00)
 - The client sends a request without `CRP-Context-Continuation-Id`, starting a new session
 
 ---
@@ -196,8 +198,8 @@ A session ends when:
 The simplest continuation pattern. Each window has exactly one parent and produces at most one child.
 
 ```
-Window 1 ──→ Window 2 ──→ Window 3 ──→ Window 4
-  │              │              │              │
+Window 1 â”€â”€â†’ Window 2 â”€â”€â†’ Window 3 â”€â”€â†’ Window 4
+  â”‚              â”‚              â”‚              â”‚
   root         child          child          leaf
 ```
 
@@ -205,10 +207,10 @@ Window 1 ──→ Window 2 ──→ Window 3 ──→ Window 4
 
 In linear continuation, Window N+1 receives:
 
-1. **Summary of Window N's response** — a compressed representation (see §12)
-2. **Deferred facts** — high-relevance facts that didn't fit in Window N's budget
-3. **New query-specific facts** — if the user's next query requires additional CKF facts
-4. **Cross-window metadata** — quality history, safety budget, HMAC chain tip
+1. **Summary of Window N's response** â€” a compressed representation (see Â§12)
+2. **Deferred facts** â€” high-relevance facts that didn't fit in Window N's budget
+3. **New query-specific facts** â€” if the user's next query requires additional CKF facts
+4. **Cross-window metadata** â€” quality history, safety budget, HMAC chain tip
 
 ### 5.3 Fact Deduplication Across Windows
 
@@ -220,7 +222,7 @@ facts_seen = set()
 for each window:
     candidate_facts = Phase1_Select(query, ckf)
     new_facts = [f for f in candidate_facts if f.fact_id not in facts_seen]
-    envelope = Phase2_Rank(new_facts) → Phase3_Pack(new_facts)
+    envelope = Phase2_Rank(new_facts) â†’ Phase3_Pack(new_facts)
     facts_seen.update([f.fact_id for f in envelope.facts])
 ```
 
@@ -253,7 +255,7 @@ Each fan-out child:
 - Has the same `window_number` as its siblings (window_number = 2 for all three)
 - Has a unique `window_id`
 - Receives its own Context Envelope (different query, different facts)
-- Inherits the parent's safety budget (NOT the full budget — the parent's remaining budget at dispatch time)
+- Inherits the parent's safety budget (NOT the full budget â€” the parent's remaining budget at dispatch time)
 - Has `pattern = FAN_OUT`
 
 ### 6.4 Safety Budget Partitioning
@@ -264,7 +266,7 @@ When fan-out creates N children from a parent with safety budget B:
 child_budget = B  // Each child inherits the SAME budget, not B/N
 ```
 
-The budget is not divided because each child operates independently. However, when fan-in occurs (§7), the merged child's budget is the MINIMUM of all parent budgets:
+The budget is not divided because each child operates independently. However, when fan-in occurs (Â§7), the merged child's budget is the MINIMUM of all parent budgets:
 
 ```
 fan_in_budget = min(parent_a.safety_budget, parent_b.safety_budget, parent_c.safety_budget)
@@ -319,7 +321,7 @@ CRP-Context-Strategy: fan-in
 **Step 7.3.2:** Gateway validates all continuation pointers belong to the same session and share a common ancestor.
 
 **Step 7.3.3:** Gateway constructs the synthesis envelope:
-1. Summarises each child's response (see §12)
+1. Summarises each child's response (see Â§12)
 2. Includes summaries as facts in the synthesis envelope
 3. Includes any additional CKF facts needed for cross-cutting synthesis
 
@@ -346,7 +348,7 @@ The fan-in window has:
 - `parent_ids = [Window 2a ID, Window 2b ID, Window 2c ID]`
 - `pattern = FAN_IN`
 - `safety_budget = min(all parent budgets)`
-- `hmac` computed from all parent HMACs (see §7.3.5)
+- `hmac` computed from all parent HMACs (see Â§7.3.5)
 
 ---
 
@@ -384,7 +386,7 @@ The 0.60 threshold reserves 40% of the budget for new facts specific to the chil
 
 ### 8.3 Transfer Recording
 
-Each transfer is recorded as a DAG edge with metadata (see §3.2). This enables auditors to trace exactly what context flowed between windows and in what form.
+Each transfer is recorded as a DAG edge with metadata (see Â§3.2). This enables auditors to trace exactly what context flowed between windows and in what form.
 
 ---
 
@@ -423,7 +425,7 @@ child_b_hmac = HMAC-SHA256(
 
 ### 9.3 Fan-In Chain Extension
 
-Fan-in merges multiple parent HMACs (see §7.3.5):
+Fan-in merges multiple parent HMACs (see Â§7.3.5):
 
 ```
 sorted_parent_hmacs = SORT([child_a.hmac, child_b.hmac, child_c.hmac])
@@ -478,7 +480,7 @@ The `CRP-Set-Session` token is updated after every window and carries:
 The session token enables stateless continuation across:
 
 - **Gateway instances:** Any CRP gateway instance that receives a valid token can reconstruct the session context without shared storage. The HMAC chain tip verifies the token's position in the chain.
-- **Language boundaries:** A Go service can relay the token to a Python CRP sidecar — no shared database needed.
+- **Language boundaries:** A Go service can relay the token to a Python CRP sidecar â€” no shared database needed.
 - **Process restarts:** If the gateway restarts, the token carries sufficient state to resume.
 
 ### 10.3 Token Expiry and Continuation
@@ -565,7 +567,7 @@ Summarisation requires an additional LLM call. This call:
 
 ### 13.1 Quality History
 
-The session token carries `QualityHistory` — the quality tier of every window in the session:
+The session token carries `QualityHistory` â€” the quality tier of every window in the session:
 
 ```
 QualityHistory=A,A,B,B,C
@@ -577,10 +579,10 @@ If quality is monotonically degrading (each window worse than or equal to the pr
 
 | Pattern | Detection | Gateway Action |
 |---------|-----------|----------------|
-| A → A → B | First drop | Log warning, continue |
-| A → B → C | Sustained degradation | Recommend strategy upgrade in response |
-| B → C → D | Critical degradation | Emit `CRP-Context-Quality-Tier: D` with warning; recommend session restart |
-| Any → D → D | Persistent deficiency | Gateway MAY refuse continuation; return HTTP 503 |
+| A â†’ A â†’ B | First drop | Log warning, continue |
+| A â†’ B â†’ C | Sustained degradation | Recommend strategy upgrade in response |
+| B â†’ C â†’ D | Critical degradation | Emit `CRP-Context-Quality-Tier: D` with warning; recommend session restart |
+| Any â†’ D â†’ D | Persistent deficiency | Gateway MAY refuse continuation; return HTTP 503 |
 
 ### 13.3 Header Output
 
@@ -647,10 +649,10 @@ When an orchestrator agent delegates to sub-agents, each sub-agent's session is 
 
 ```
 Orchestrator Window 1
-├── Agent A: Window 2a → Window 3a (linear chain)
-├── Agent B: Window 2b → Window 3b → Window 4b (deeper chain)
-└── Agent C: Window 2c (single window)
-│
+â”œâ”€â”€ Agent A: Window 2a â†’ Window 3a (linear chain)
+â”œâ”€â”€ Agent B: Window 2b â†’ Window 3b â†’ Window 4b (deeper chain)
+â””â”€â”€ Agent C: Window 2c (single window)
+â”‚
 Orchestrator Window 5 (fan-in synthesis)
 ```
 
@@ -704,7 +706,7 @@ If chain verification fails during a continuation request:
 - Return HTTP 409 Conflict
 - Set `CRP-Provenance-Chain-Integrity: BROKEN`
 - Log a CRITICAL audit incident
-- The session CANNOT be continued — client MUST start a new session
+- The session CANNOT be continued â€” client MUST start a new session
 
 ---
 
@@ -724,11 +726,11 @@ Continuation IDs from Session A MUST NOT be usable in Session B. The gateway MUS
 
 ### 17.4 Fan-Out Resource Limits
 
-Fan-out can amplify resource consumption. The `max_fan_out` and `max_dag_nodes` limits (§11) MUST be enforced to prevent denial-of-service via unbounded fan-out.
+Fan-out can amplify resource consumption. The `max_fan_out` and `max_dag_nodes` limits (Â§11) MUST be enforced to prevent denial-of-service via unbounded fan-out.
 
 ### 17.5 Summary Injection
 
-Context summaries (§12) are generated by an LLM and injected into subsequent envelopes. A compromised or adversarial LLM could generate a summary that poisons future context. Mitigation: the DPE fidelity check on summaries (§12.3) detects distorted summaries. Gateway SHOULD fall back to `RESULT_ONLY` transfer if summary fidelity is low.
+Context summaries (Â§12) are generated by an LLM and injected into subsequent envelopes. A compromised or adversarial LLM could generate a summary that poisons future context. Mitigation: the DPE fidelity check on summaries (Â§12.3) detects distorted summaries. Gateway SHOULD fall back to `RESULT_ONLY` transfer if summary fidelity is low.
 
 ---
 
@@ -736,18 +738,18 @@ Context summaries (§12) are generated by an LLM and injected into subsequent en
 
 ### Normative References
 
-- CRP-SPEC-001 — Core Protocol Specification
-- CRP-SPEC-002 — Header Field Specification
-- CRP-SPEC-003 — Context Envelope & Packing
-- CRP-SPEC-007 — Session Token & State Relay
-- CRP-SPEC-011 — Audit Trail & HMAC Chain
-- CRP-SPEC-015 — Security & Privacy
+- CRP-SPEC-001 â€” Core Protocol Specification
+- CRP-SPEC-002 â€” Header Field Specification
+- CRP-SPEC-003 â€” Context Envelope & Packing
+- CRP-SPEC-007 â€” Session Token & State Relay
+- CRP-SPEC-011 â€” Audit Trail & HMAC Chain
+- CRP-SPEC-015 â€” Security & Privacy
 
 ### Informative References
 
-- CRP-SPEC-005 — Decision Provenance Engine
-- CRP-SPEC-008 — Dispatch Strategy Specification
-- CRP-SPEC-012 — Multi-Agent Safety Protocol
+- CRP-SPEC-005 â€” Decision Provenance Engine
+- CRP-SPEC-008 â€” Dispatch Strategy Specification
+- CRP-SPEC-012 â€” Multi-Agent Safety Protocol
 
 ---
 
@@ -759,18 +761,18 @@ A complete 5-window session with fan-out and fan-in:
 Session: crp_sess_7f3a9bc2
 
 Window 1 [root, LINEAR, Quality=A, Risk=LOW, Budget=1.00]
-│
-├──► Window 2a [FAN_OUT, Quality=A, Risk=LOW, Budget=0.95]
-│         │
-│         └──► Window 3a [LINEAR, Quality=B, Risk=HIGH, Budget=0.80]
-│
-├──► Window 2b [FAN_OUT, Quality=A, Risk=MEDIUM, Budget=0.90]
-│
-└──► Window 2c [FAN_OUT, Quality=B, Risk=LOW, Budget=0.95]
+â”‚
+â”œâ”€â”€â–º Window 2a [FAN_OUT, Quality=A, Risk=LOW, Budget=0.95]
+â”‚         â”‚
+â”‚         â””â”€â”€â–º Window 3a [LINEAR, Quality=B, Risk=HIGH, Budget=0.80]
+â”‚
+â”œâ”€â”€â–º Window 2b [FAN_OUT, Quality=A, Risk=MEDIUM, Budget=0.90]
+â”‚
+â””â”€â”€â–º Window 2c [FAN_OUT, Quality=B, Risk=LOW, Budget=0.95]
 
-         Window 3a ──┐
-         Window 2b ──┼──► Window 4 [FAN_IN, Quality=B, Risk=MEDIUM, Budget=0.80]
-         Window 2c ──┘
+         Window 3a â”€â”€â”
+         Window 2b â”€â”€â”¼â”€â”€â–º Window 4 [FAN_IN, Quality=B, Risk=MEDIUM, Budget=0.80]
+         Window 2c â”€â”€â”˜
 
 HMAC Chain:
   Root: sha256:a1b2c3...
@@ -781,7 +783,7 @@ HMAC Chain:
   W4:   HMAC(W4_content || SORT[W3a,W2b,W2c]_HMACs, key) = sha256:p6q7r8...
 
 QualityHistory: A, [A,A,B], [B], B   (brackets denote parallel windows)
-Safety Budget:  1.00 → [0.95, 0.90, 0.95] → [0.80] → 0.80 (fan-in = min)
+Safety Budget:  1.00 â†’ [0.95, 0.90, 0.95] â†’ [0.80] â†’ 0.80 (fan-in = min)
 
 Window Lineage (for W4):
   CRP-Provenance-Window-Lineage: crp_win_1 -> [crp_win_2a -> crp_win_3a, crp_win_2b, crp_win_2c] -> crp_win_4
@@ -789,4 +791,4 @@ Window Lineage (for W4):
 
 ---
 
-*Copyright © 2025–2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0 (specification text). CRP™ is a trademark of AutoCyber AI Pty Ltd.*
+*Copyright Â© 2025â€“2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0 (specification text). CRPâ„¢ is a trademark of AutoCyber AI Pty Ltd.*

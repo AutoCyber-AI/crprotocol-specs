@@ -1,7 +1,9 @@
+﻿<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright 2025-2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis -->
 # CRP-SPEC-001: Core Protocol Specification
 
 **Document:** CRP-SPEC-001  
-**Title:** Context Relay Protocol (CRP) — Core Specification  
+**Title:** Context Relay Protocol (CRP) â€” Core Specification  
 **Version:** 3.0.0  
 **Status:** Draft  
 **Author:** Constantinos Vidiniotis, AutoCyber AI Pty Ltd  
@@ -21,7 +23,7 @@ This document defines the foundational axioms, request/response model, sidecar a
 
 ## Status of This Document
 
-This is a working draft of the CRP Core Specification. It is published for review and comment. Feedback may be submitted via email 'contact@autocyberai.com' or 'contact@crprotocol.io' or soon at the CRP GitHub repository at `github.com/crprotocol/spec`.
+This is a working draft of the CRP Core Specification. It is published for review and comment. Feedback may be submitted via email 'contact@autocyberai.com' or 'contact@crprotocol.io' or soon at the CRP GitHub repository at `github.com/AutoCyber-AI/crprotocol-specs`.
 
 This document is intended for submission as an IETF Internet-Draft targeting the Applications and Real-Time Area (ART).
 
@@ -31,7 +33,7 @@ This document is intended for submission as an IETF Internet-Draft targeting the
 
 ### 1.1 Background
 
-Large language model systems deployed in production lack a standardised mechanism for communicating the quality, safety, and compliance state of their outputs to consuming applications, intermediary services, and governance platforms. Each system operator builds bespoke instrumentation to capture hallucination risk, session state, and audit trails — leading to fragmented, non-interoperable approaches.
+Large language model systems deployed in production lack a standardised mechanism for communicating the quality, safety, and compliance state of their outputs to consuming applications, intermediary services, and governance platforms. Each system operator builds bespoke instrumentation to capture hallucination risk, session state, and audit trails â€” leading to fragmented, non-interoperable approaches.
 
 The Context Relay Protocol addresses this gap by defining:
 
@@ -92,25 +94,25 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 CRP's design is governed by ten foundational axioms. All conformant CRP implementations MUST uphold these axioms.
 
-**Axiom 1 — Completeness:** The Context Envelope MUST include all factual content necessary for the LLM to answer the query without reliance on parametric memory, where such content exists in the CKF.
+**Axiom 1 â€” Completeness:** The Context Envelope MUST include all factual content necessary for the LLM to answer the query without reliance on parametric memory, where such content exists in the CKF.
 
-**Axiom 2 — Accuracy:** Facts included in the envelope MUST be drawn from verified source material. The DPE MUST assess output accuracy against envelope content.
+**Axiom 2 â€” Accuracy:** Facts included in the envelope MUST be drawn from verified source material. The DPE MUST assess output accuracy against envelope content.
 
-**Axiom 3 — Relevance:** The envelope packing algorithm MUST prioritise facts by relevance score. Irrelevant facts MUST NOT consume token budget at the cost of relevant facts.
+**Axiom 3 â€” Relevance:** The envelope packing algorithm MUST prioritise facts by relevance score. Irrelevant facts MUST NOT consume token budget at the cost of relevant facts.
 
-**Axiom 4 — Transparency boundary:** CRP headers MUST NOT be forwarded to LLM providers. The model MUST remain ignorant of the protocol layer.
+**Axiom 4 â€” Transparency boundary:** CRP headers MUST NOT be forwarded to LLM providers. The model MUST remain ignorant of the protocol layer.
 
-**Axiom 5 — Oversight capability:** All CRP implementations MUST support human oversight triggering. The `CRP-Oversight-Mode: halt` directive MUST be honoured unconditionally.
+**Axiom 5 â€” Oversight capability:** All CRP implementations MUST support human oversight triggering. The `CRP-Oversight-Mode: halt` directive MUST be honoured unconditionally.
 
-**Axiom 6 — Resource constraint awareness:** The gateway MUST track token budget consumption and expose it via `CRP-Context-Tokens-Used` and `CRP-Context-Window` headers.
+**Axiom 6 â€” Resource constraint awareness:** The gateway MUST track token budget consumption and expose it via `CRP-Context-Tokens-Used` and `CRP-Context-Window` headers.
 
-**Axiom 7 — Provenance integrity:** Every AI call MUST produce a tamper-evident audit record. HMAC chain integrity MUST be verifiable by any party holding the session key.
+**Axiom 7 â€” Provenance integrity:** Every AI call MUST produce a tamper-evident audit record. HMAC chain integrity MUST be verifiable by any party holding the session key.
 
-**Axiom 8 — Continuity:** Continuation sessions MUST preserve context quality across window boundaries. The `CRP-Context-Continuation-Id` header MUST enable stateless session relay.
+**Axiom 8 â€” Continuity:** Continuation sessions MUST preserve context quality across window boundaries. The `CRP-Context-Continuation-Id` header MUST enable stateless session relay.
 
-**Axiom 9 — Regulatory alignment:** CRP outputs MUST be classifiable against EU AI Act, GDPR, NIST AI RMF, and ISO 42001 frameworks. Classification MUST be emitted as response headers.
+**Axiom 9 â€” Regulatory alignment:** CRP outputs MUST be classifiable against EU AI Act, GDPR, NIST AI RMF, and ISO 42001 frameworks. Classification MUST be emitted as response headers.
 
-**Axiom 10 — Provider neutrality:** CRP MUST support any LLM provider exposing an OpenAI-compatible API. Provider selection MUST be transparent to consuming applications.
+**Axiom 10 â€” Provider neutrality:** CRP MUST support any LLM provider exposing an OpenAI-compatible API. Provider selection MUST be transparent to consuming applications.
 
 ---
 
@@ -119,32 +121,32 @@ CRP's design is governed by ten foundational axioms. All conformant CRP implemen
 ### 4.1 Overview
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                    Client Application                    │
-│  (sends CRP-Accept-*, CRP-Safety-Policy, CRP-Session)   │
-└────────────────────────┬────────────────────────────────┘
-                         │ HTTP request with CRP req headers
-                         ▼
-┌─────────────────────────────────────────────────────────┐
-│                     CRP Gateway                          │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐  ┌────────┐  │
-│  │ Envelope │  │  DPE     │  │  Audit   │  │  Comply│  │
-│  │ Builder  │  │ (Safety) │  │  Chain   │  │  Feed  │  │
-│  └──────────┘  └──────────┘  └──────────┘  └────────┘  │
-└────────────────────────┬────────────────────────────────┘
-                         │ Stripped request (no CRP headers)
-                         ▼
-┌─────────────────────────────────────────────────────────┐
-│                   LLM Provider                           │
-│         (OpenAI / Anthropic / Gemini / Ollama)           │
-└─────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                    Client Application                    â”‚
+â”‚  (sends CRP-Accept-*, CRP-Safety-Policy, CRP-Session)   â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                         â”‚ HTTP request with CRP req headers
+                         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                     CRP Gateway                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ Envelope â”‚  â”‚  DPE     â”‚  â”‚  Audit   â”‚  â”‚  Complyâ”‚  â”‚
+â”‚  â”‚ Builder  â”‚  â”‚ (Safety) â”‚  â”‚  Chain   â”‚  â”‚  Feed  â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â””â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¬â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+                         â”‚ Stripped request (no CRP headers)
+                         â–¼
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                   LLM Provider                           â”‚
+â”‚         (OpenAI / Anthropic / Gemini / Ollama)           â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ### 4.2 Request Flow
 
 1. Client sends HTTP request to CRP gateway with optional CRP request headers
 2. Gateway authenticates request using CRP API key
-3. Gateway checks `CRP-Context-If-Match` — returns 304 if ETag matches
+3. Gateway checks `CRP-Context-If-Match` â€” returns 304 if ETag matches
 4. Gateway assembles Context Envelope from CKF (3-phase: select, rank, pack)
 5. Gateway selects dispatch strategy from `CRP-Accept-Strategy` or TaskIntent detection
 6. Gateway strips all CRP headers, forwards packed request to LLM provider
@@ -243,4 +245,4 @@ See Section 2 (Terminology).
 
 ---
 
-*Copyright © 2025–2026 AutoCyber AI Pty Ltd. This specification text is licensed under CC BY 4.0. The CRP™ name and logo are trademarks of AutoCyber AI Pty Ltd.*
+*Copyright Â© 2025â€“2026 AutoCyber AI Pty Ltd. This specification text is licensed under CC BY 4.0. The CRPâ„¢ name and logo are trademarks of AutoCyber AI Pty Ltd.*

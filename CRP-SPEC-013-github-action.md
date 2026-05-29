@@ -1,7 +1,9 @@
+﻿<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright 2025-2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis -->
 # CRP-SPEC-013: GitHub Action & Scanner Specification
 
 **Document:** CRP-SPEC-013  
-**Title:** Context Relay Protocol (CRP) — crp-scan GitHub Action & Repository Scanner  
+**Title:** Context Relay Protocol (CRP) â€” crp-scan GitHub Action & Repository Scanner  
 **Version:** 3.0.0  
 **Status:** Draft  
 **Author:** Constantinos Vidiniotis, AutoCyber AI Pty Ltd  
@@ -14,7 +16,7 @@
 
 ## Abstract
 
-This document specifies `crp-scan` — a GitHub Action and standalone CLI tool that performs AI governance static analysis on source code repositories. It detects AI integration points (LLM API calls, agent framework usage, prompt definitions), classifies them by governance risk level, identifies which CRP headers would be missing without CRP integration, generates SARIF reports for GitHub's Security tab, and links each finding to CRP Comply for remediation. This is the top-of-funnel product in the CRP ecosystem — free for basic scanning, paid for full header gap analysis and auto-remediation.
+This document specifies `crp-scan` â€” a GitHub Action and standalone CLI tool that performs AI governance static analysis on source code repositories. It detects AI integration points (LLM API calls, agent framework usage, prompt definitions), classifies them by governance risk level, identifies which CRP headers would be missing without CRP integration, generates SARIF reports for GitHub's Security tab, and links each finding to CRP Comply for remediation. This is the top-of-funnel product in the CRP ecosystem â€” free for basic scanning, paid for full header gap analysis and auto-remediation.
 
 ---
 
@@ -125,7 +127,7 @@ Remediation: Change base_url to CRP Gateway endpoint.
   This single change enables all 58 CRP headers automatically.
   No other code changes required.
 
-  → Create your free CRP account: https://comply.crprotocol.io/signup?source=github-scan
+  â†’ Create your free CRP account: https://comply.crprotocol.io/signup?source=github-scan
 ```
 
 **For agent frameworks:**
@@ -137,7 +139,7 @@ Remediation: Wrap the agent's LLM provider with CRP Gateway.
   Add CRP-Safety-Policy header for agent safety budget:
   CRP-Safety-Policy: halt-on CRITICAL; upgrade-on-risk reflexive
   
-  → Create your free CRP account: https://comply.crprotocol.io/signup?source=github-scan
+  â†’ Create your free CRP account: https://comply.crprotocol.io/signup?source=github-scan
 ```
 
 ---
@@ -215,7 +217,7 @@ The scanner outputs SARIF v2.1.0 (Static Analysis Results Interchange Format) fo
   "ruleId": "CRP001",
   "level": "warning",
   "message": {
-    "text": "Ungoverned OpenAI API call. Missing: CRP-Safety-* (hallucination risk), CRP-Provenance-HMAC (audit trail), CRP-Compliance-EU-AI-Act (regulatory classification). Fix: change base_url to gateway.crprotocol.io/v1. → comply.crprotocol.io/signup"
+    "text": "Ungoverned OpenAI API call. Missing: CRP-Safety-* (hallucination risk), CRP-Provenance-HMAC (audit trail), CRP-Compliance-EU-AI-Act (regulatory classification). Fix: change base_url to gateway.crprotocol.io/v1. â†’ comply.crprotocol.io/signup"
   },
   "locations": [{
     "physicalLocation": {
@@ -296,26 +298,26 @@ jobs:
 
 | Feature | Free | Pro ($29/repo/mo) |
 |---------|------|-------------------|
-| AI integration point detection | ✓ | ✓ |
-| Basic risk classification | ✓ | ✓ |
-| SARIF output for GitHub Security tab | ✓ | ✓ |
-| PR annotations | ✓ | ✓ |
-| CRP Comply signup link | ✓ | ✓ |
-| Full header gap analysis (which of 58 headers missing) | ✗ | ✓ |
-| Auto-remediation PR (generates CRP wrapper code) | ✗ | ✓ |
-| EU AI Act pre-classification per detected system | ✗ | ✓ |
-| CRP Comply sync (findings in compliance dashboard) | ✗ | ✓ |
-| Block merge on configurable risk levels | ✗ | ✓ |
-| Weekly governance report email | ✗ | ✓ |
-| Custom rule configuration | ✗ | ✓ |
+| AI integration point detection | âœ“ | âœ“ |
+| Basic risk classification | âœ“ | âœ“ |
+| SARIF output for GitHub Security tab | âœ“ | âœ“ |
+| PR annotations | âœ“ | âœ“ |
+| CRP Comply signup link | âœ“ | âœ“ |
+| Full header gap analysis (which of 58 headers missing) | âœ— | âœ“ |
+| Auto-remediation PR (generates CRP wrapper code) | âœ— | âœ“ |
+| EU AI Act pre-classification per detected system | âœ— | âœ“ |
+| CRP Comply sync (findings in compliance dashboard) | âœ— | âœ“ |
+| Block merge on configurable risk levels | âœ— | âœ“ |
+| Weekly governance report email | âœ— | âœ“ |
+| Custom rule configuration | âœ— | âœ“ |
 
 ### 5.1 Funnel Integration
 
 Every free-tier finding includes a link:
 
 ```
-→ Fix this with CRP Gateway (free tier available): https://gateway.crprotocol.io
-→ Generate compliance evidence: https://comply.crprotocol.io/signup?source=github-scan&finding=CRP001
+â†’ Fix this with CRP Gateway (free tier available): https://gateway.crprotocol.io
+â†’ Generate compliance evidence: https://comply.crprotocol.io/signup?source=github-scan&finding=CRP001
 ```
 
 The Comply signup link is pre-populated with:
@@ -363,12 +365,12 @@ A VS Code extension is planned that provides:
 
 ## 8. References
 
-- CRP-SPEC-001 — Core Protocol Specification
-- CRP-SPEC-002 — Header Field Specification
-- CRP-SPEC-010 — Regulatory Controls Mapping
-- SARIF v2.1.0 — OASIS Static Analysis Results Interchange Format
-- GitHub Code Scanning — SARIF Upload Documentation
+- CRP-SPEC-001 â€” Core Protocol Specification
+- CRP-SPEC-002 â€” Header Field Specification
+- CRP-SPEC-010 â€” Regulatory Controls Mapping
+- SARIF v2.1.0 â€” OASIS Static Analysis Results Interchange Format
+- GitHub Code Scanning â€” SARIF Upload Documentation
 
 ---
 
-*Copyright © 2025–2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0. CRP™ is a trademark of AutoCyber AI Pty Ltd.*
+*Copyright Â© 2025â€“2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0. CRPâ„¢ is a trademark of AutoCyber AI Pty Ltd.*

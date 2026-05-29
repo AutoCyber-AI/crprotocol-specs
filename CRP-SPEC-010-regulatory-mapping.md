@@ -1,9 +1,11 @@
+﻿<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright 2025-2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis -->
 # CRP-SPEC-010: Regulatory Controls Mapping
 
 **Document:** CRP-SPEC-010  
-**Title:** Context Relay Protocol (CRP) — Regulatory Controls Mapping  
+**Title:** Context Relay Protocol (CRP) â€” Regulatory Controls Mapping  
 **Version:** 3.0.0  
-**Status:** Draft — PUBLIC DOCUMENT (intended for NIST/DISR submission)  
+**Status:** Draft â€” PUBLIC DOCUMENT (intended for NIST/DISR submission)  
 **Author:** Constantinos Vidiniotis, AutoCyber AI Pty Ltd  
 **Date:** 2026-05-25  
 **License:** CC BY 4.0
@@ -30,9 +32,9 @@ This document maps every CRP feature, header, and mechanism to specific controls
 | **Art. 12** | Record-keeping | HMAC-chained audit trail with 30+ event types, tamper-evident | `CRP-Provenance-HMAC`, `CRP-Compliance-Audit-Trail-Id` | Complete audit trail export |
 | **Art. 13** | Transparency | Attribution analysis per-call, grounding percentage disclosed | `CRP-Safety-Attribution`, `CRP-Safety-Grounding-Pct` | Transparency report |
 | **Art. 14(1)** | Human oversight capability | Configurable oversight modes (auto/human-review/halt/log-only) | `CRP-Safety-Oversight-Mode` | Oversight event register |
-| **Art. 14(3)(a)** | Ability to fully understand AI system | CRP Visualise provides live session tracing and provenance DAG | — (product feature) | Session replay reports |
+| **Art. 14(3)(a)** | Ability to fully understand AI system | CRP Visualise provides live session tracing and provenance DAG | â€” (product feature) | Session replay reports |
 | **Art. 14(4)(a)** | Ability to not use AI system | `halt-on CRITICAL` immediately stops response delivery | `CRP-Safety-Retry-After: oversight-required` | Halt event log |
-| **Art. 17** | Quality management system | Quality Tier (S–D) tracking, quality degradation detection, RQA pipeline | `CRP-Context-Quality-Tier`, `CRP-Quality-Score` | Quality management evidence |
+| **Art. 17** | Quality management system | Quality Tier (Sâ€“D) tracking, quality degradation detection, RQA pipeline | `CRP-Context-Quality-Tier`, `CRP-Quality-Score` | Quality management evidence |
 | **Art. 52** | Transparency obligations (limited risk) | `CRP-Compliance-EU-AI-Act: LIMITED` classification | `CRP-Compliance-EU-AI-Act` | Transparency obligation checklist |
 | **Art. 64** | Logging obligations | 30+ event types in HMAC-chained audit trail | `CRP-Provenance-HMAC`, `CRP-Provenance-Chain-Integrity` | EU AI Act logging compliance report |
 | **Art. 73** | Incident reporting | Safety violations (CRITICAL risk) auto-reported via `report-uri` webhook | `CRP-Safety-Report-URI` | Incident report template |
@@ -50,10 +52,10 @@ This document maps every CRP feature, header, and mechanism to specific controls
 | **Art. 5(1)(d)** | Accuracy | DPE fidelity verification, fabrication detection | `CRP-Provenance-Fidelity-Score`, `CRP-Safety-Fabrications` |
 | **Art. 5(1)(f)** | Integrity and confidentiality | HMAC chain integrity, TLS 1.3, encryption at rest | `CRP-Provenance-Chain-Integrity` |
 | **Art. 13/14** | Information to data subject | Attribution type disclosed per-call | `CRP-Safety-Attribution` |
-| **Art. 17** | Right to erasure | CKF fact deletion, HMAC chain truncation | — (operational) |
+| **Art. 17** | Right to erasure | CKF fact deletion, HMAC chain truncation | â€” (operational) |
 | **Art. 22** | Automated decision-making | Oversight mode enforcement, reproducibility seed | `CRP-Safety-Oversight-Mode`, `CRP-LLM-Reproducibility-Seed` |
 | **Art. 25** | Data protection by design | CRP architecture embeds privacy controls (no-store, PII detection, data residency) | `CRP-Compliance-Data-Residency` |
-| **Art. 32** | Security of processing | HMAC-SHA256, HKDF key derivation, AES-256-GCM at rest, TLS 1.3 | — (infrastructure) |
+| **Art. 32** | Security of processing | HMAC-SHA256, HKDF key derivation, AES-256-GCM at rest, TLS 1.3 | â€” (infrastructure) |
 | **Art. 35** | DPIA | CRP Comply generates DPIA from protocol data | `CRP-Compliance-Audit-Trail-URI` |
 | **Art. 44** | Transfer safeguards | Data residency header enforcement | `CRP-Compliance-Data-Residency` |
 
@@ -67,9 +69,9 @@ This document maps every CRP feature, header, and mechanism to specific controls
 | **A.5.4** | Roles and responsibilities | Oversight mode assignment per session/system | `CRP-Safety-Oversight-Mode` |
 | **A.6.1.2** | AI impact assessment | CRP Comply auto-generates impact assessment from live data | `CRP-Compliance-Audit-Trail-URI` |
 | **A.6.2.2** | AI risk assessment | DPE composite risk scoring per-call | `CRP-Safety-Hallucination-Risk` |
-| **A.7.3** | Competence and training | — (organisational, not protocol-level) | — |
+| **A.7.3** | Competence and training | â€” (organisational, not protocol-level) | â€” |
 | **A.8.2** | AI system development | Quality tier tracking, conformance levels | `CRP-Context-Quality-Tier` |
-| **A.8.4** | AI system testing | Conformance test suite (CRP-SPEC-014) | — |
+| **A.8.4** | AI system testing | Conformance test suite (CRP-SPEC-014) | â€” |
 | **A.9.2** | Monitoring and measurement | Continuous DPE analysis on every call | All `CRP-Safety-*` headers |
 | **A.9.3** | Internal audit | HMAC-chained audit trail, CRP Visualise | `CRP-Provenance-HMAC` |
 | **A.9.4** | Corrective action | `upgrade-on-risk` automatic remediation, re-dispatch protocol | `CRP-Safety-Policy` |
@@ -89,15 +91,15 @@ This document maps every CRP feature, header, and mechanism to specific controls
 | **GOVERN 1.5** | Risk management integration | DPE integrated into every AI call | `CRP-Safety-Hallucination-Risk` |
 | **MAP 1.1** | Intended purpose documented | AI system registration in Gateway configuration | `CRP-Compliance-EU-AI-Act` |
 | **MAP 1.6** | Risk tolerance defined | Safety Policy thresholds, safety budget, `CRP-Accept-Risk` | `CRP-Accept-Risk`, `CRP-Agent-Safety-Budget` |
-| **MAP 3.5** | Bias and fairness | — (CRP does not currently assess bias; out of scope) | — |
+| **MAP 3.5** | Bias and fairness | â€” (CRP does not currently assess bias; out of scope) | â€” |
 | **MEASURE 1.1** | Appropriate methods selected | DPE 13-stage pipeline as measurement methodology | All `CRP-Safety-*` |
 | **MEASURE 2.3** | AI system performance | Quality tier, completeness, flow scoring | `CRP-Context-Quality-Tier`, `CRP-Quality-Score` |
 | **MEASURE 2.5** | Trustworthiness evaluation | Composite risk scoring with regulatory amplifiers | `CRP-Safety-Hallucination-Score` |
-| **MEASURE 2.6** | Validation against requirements | Conformance test suite (CRP-SPEC-014) | — |
+| **MEASURE 2.6** | Validation against requirements | Conformance test suite (CRP-SPEC-014) | â€” |
 | **MANAGE 1.1** | Risk prioritisation | Risk classification (CRITICAL/HIGH/MEDIUM/LOW) | `CRP-Safety-Hallucination-Risk` |
 | **MANAGE 2.2** | Monitoring frequency | Continuous (every AI call) | All `CRP-Safety-*` |
 | **MANAGE 3.2** | Incident response | CRITICAL halt + webhook reporting + audit trail | `CRP-Safety-Report-URI` |
-| **MANAGE 4.1** | Decommissioning | CKF erasure, session termination, data export | — (operational) |
+| **MANAGE 4.1** | Decommissioning | CKF erasure, session termination, data export | â€” (operational) |
 
 **Coverage: 13/14 mapped categories. MAP 3.5 (bias/fairness) is out of CRP's current scope.**
 
@@ -123,7 +125,7 @@ This document maps every CRP feature, header, and mechanism to specific controls
 | Principle | Requirement | CRP Feature | CRP Header |
 |-----------|------------|-------------|------------|
 | **P1** Human-centred values | Human oversight capability | `CRP-Safety-Oversight-Mode` |
-| **P2** Fairness | — (bias detection out of current scope) | — |
+| **P2** Fairness | â€” (bias detection out of current scope) | â€” |
 | **P3** Privacy | PII detection, no-store cache, data residency | `CRP-Compliance-GDPR-PII`, `CRP-Compliance-Data-Residency` |
 | **P4** Reliability & safety | DPE risk scoring, safety budget, halt enforcement | `CRP-Safety-Hallucination-Risk`, `CRP-Agent-Safety-Budget` |
 | **P5** Transparency | Attribution analysis, provenance chain, CRP Visualise | `CRP-Safety-Attribution`, `CRP-Provenance-Report-URI` |
@@ -139,15 +141,15 @@ This document maps every CRP feature, header, and mechanism to specific controls
 |-------------|-----------|------|-----------|----------|-------|-----------|
 | DPE risk scoring | Art. 9 | Art. 5(1)(d) | A.6.2.2 | MEASURE 2.5 | CC9.1 | P4 |
 | HMAC audit chain | Art. 12, 64 | Art. 5(1)(f) | A.9.3 | GOVERN 1.2 | CC7.1 | P7 |
-| Human oversight modes | Art. 14 | Art. 22 | A.5.4 | MANAGE 3.2 | — | P1, P8 |
-| Safety Policy | Art. 9(4) | — | A.5.2 | MAP 1.6 | CC9.1 | P4 |
-| PII detection | — | Art. 5(1)(c) | — | — | — | P3 |
-| Data residency | — | Art. 44 | — | — | — | P3 |
-| CRP Comply evidence | Art. 11 | Art. 35 | A.6.1.2 | — | CC7.2 | P7 |
-| Quality scoring | Art. 17 | — | A.10.2 | MEASURE 2.3 | — | P4 |
-| Safety budget | — | — | — | MAP 1.6 | — | P4 |
-| Attribution analysis | Art. 13 | Art. 13 | — | MEASURE 1.1 | — | P5 |
+| Human oversight modes | Art. 14 | Art. 22 | A.5.4 | MANAGE 3.2 | â€” | P1, P8 |
+| Safety Policy | Art. 9(4) | â€” | A.5.2 | MAP 1.6 | CC9.1 | P4 |
+| PII detection | â€” | Art. 5(1)(c) | â€” | â€” | â€” | P3 |
+| Data residency | â€” | Art. 44 | â€” | â€” | â€” | P3 |
+| CRP Comply evidence | Art. 11 | Art. 35 | A.6.1.2 | â€” | CC7.2 | P7 |
+| Quality scoring | Art. 17 | â€” | A.10.2 | MEASURE 2.3 | â€” | P4 |
+| Safety budget | â€” | â€” | â€” | MAP 1.6 | â€” | P4 |
+| Attribution analysis | Art. 13 | Art. 13 | â€” | MEASURE 1.1 | â€” | P5 |
 
 ---
 
-*Copyright © 2025–2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0. CRP™ is a trademark of AutoCyber AI Pty Ltd.*
+*Copyright Â© 2025â€“2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0. CRPâ„¢ is a trademark of AutoCyber AI Pty Ltd.*

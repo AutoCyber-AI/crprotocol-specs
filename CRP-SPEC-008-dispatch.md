@@ -1,7 +1,9 @@
+﻿<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright 2025-2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis -->
 # CRP-SPEC-008: Dispatch Strategy Specification
 
 **Document:** CRP-SPEC-008  
-**Title:** Context Relay Protocol (CRP) — Dispatch Strategy Specification  
+**Title:** Context Relay Protocol (CRP) â€” Dispatch Strategy Specification  
 **Version:** 3.0.0  
 **Status:** Draft  
 **Author:** Constantinos Vidiniotis, AutoCyber AI Pty Ltd  
@@ -24,9 +26,9 @@ This document specifies the nine dispatch strategies available in the CRP protoc
 |----------|--------|----------|-------------------|------------|
 | `push` | 1 | Simple Q&A, fast response | Lowest | Minimal |
 | `pull` | 1 | Retrieval-heavy, document extraction | Low | Low |
-| `reflexive` | 2–3 | Verified response, self-critique | Medium | Medium |
-| `agentic` | 2–8+ | Autonomous multi-step task completion | High | High |
-| `hierarchical` | 2–4 | Multi-source aggregation and synthesis | Medium | Medium |
+| `reflexive` | 2â€“3 | Verified response, self-critique | Medium | Medium |
+| `agentic` | 2â€“8+ | Autonomous multi-step task completion | High | High |
+| `hierarchical` | 2â€“4 | Multi-source aggregation and synthesis | Medium | Medium |
 | `batch` | N | Parallel independent queries | Variable | Medium |
 | `streaming` | 1 (streamed) | Real-time token delivery | Low | Low |
 | `fan-out` | N parallel | Parallel sub-task delegation | Variable | High |
@@ -55,12 +57,12 @@ The gateway classifies the query into one of the following TaskIntent categories
 | `COMPARISON_SYNTHESIS` | Multiple sources/topics compared, "compare", "contrast", "synthesise" | `hierarchical` |
 | `BULK_PROCESSING` | Multiple independent items to process | `batch` |
 | `REAL_TIME` | Chat context, conversational, latency-sensitive | `streaming` |
-| `PARALLEL_SUBTASKS` | Decomposable into independent subtasks | `fan-out` → `fan-in` |
+| `PARALLEL_SUBTASKS` | Decomposable into independent subtasks | `fan-out` â†’ `fan-in` |
 
 ### 2.3 Override Priority
 
 ```
-1. CRP-Accept-Strategy header (highest priority — client explicit choice)
+1. CRP-Accept-Strategy header (highest priority â€” client explicit choice)
 2. CRP-Safety-Policy upgrade-on-risk directive (overrides on risk trigger)
 3. TaskIntent auto-detection (default)
 ```
@@ -105,7 +107,7 @@ Standard DPE risk-based decrement only. No additional budget consumption from st
 
 ### 4.1 Description
 
-Retrieval-optimised dispatch. The gateway prioritises the envelope packing phase — maximising fact coverage from the CKF with aggressive retrieval (higher K, broader community expansion). The LLM is instructed to extract and organise rather than generate.
+Retrieval-optimised dispatch. The gateway prioritises the envelope packing phase â€” maximising fact coverage from the CKF with aggressive retrieval (higher K, broader community expansion). The LLM is instructed to extract and organise rather than generate.
 
 ### 4.2 Flow
 
@@ -147,7 +149,7 @@ Two-to-three-pass verified dispatch. The gateway dispatches the initial response
 [Pass 1: Generate]
   [1] Envelope construction
   [2] LLM dispatch (generation)
-  [3] DPE analysis → risk_level_1
+  [3] DPE analysis â†’ risk_level_1
 
 [Pass 2: Verify]
   [4] Construct verification prompt:
@@ -164,15 +166,15 @@ Two-to-three-pass verified dispatch. The gateway dispatches the initial response
          [verification findings]
          Original response: [Pass 1 response]"
     [8] LLM dispatch (refinement) with temperature=0.3
-    [9] DPE analysis on refined response → risk_level_final
+    [9] DPE analysis on refined response â†’ risk_level_final
 
   If verification found no issues:
-    [7] DPE analysis on Pass 1 response → risk_level_final
+    [7] DPE analysis on Pass 1 response â†’ risk_level_final
 ```
 
 ### 5.3 Token Cost
 
-Reflexive dispatch costs 2–3× the tokens of a single push dispatch. This is billed at Gateway usage rates and logged in the audit trail.
+Reflexive dispatch costs 2â€“3Ã— the tokens of a single push dispatch. This is billed at Gateway usage rates and logged in the audit trail.
 
 ### 5.4 Safety Budget Impact
 
@@ -257,7 +259,7 @@ Multi-source aggregation. The gateway dispatches separate queries for each infor
 ### 7.2 Flow
 
 ```
-[1] Query decomposition → N sub-queries (one per source/topic)
+[1] Query decomposition â†’ N sub-queries (one per source/topic)
 [2] For each sub-query:
     [2a] Envelope construction (topic-specific CKF facts)
     [2b] LLM dispatch (topic-specific response)
@@ -272,15 +274,15 @@ Multi-source aggregation. The gateway dispatches separate queries for each infor
 
 ### 7.3 DAG Structure
 
-Hierarchical dispatch produces a fan-out → fan-in DAG pattern (CRP-SPEC-004 §6, §7):
+Hierarchical dispatch produces a fan-out â†’ fan-in DAG pattern (CRP-SPEC-004 Â§6, Â§7):
 
 ```
 Query: "Compare EU AI Act and GDPR on automated decisions"
-     │
-     ├──→ Sub-response A: EU AI Act analysis
-     ├──→ Sub-response B: GDPR analysis
-     │
-     └──→ Synthesis: Comparison and contrast
+     â”‚
+     â”œâ”€â”€â†’ Sub-response A: EU AI Act analysis
+     â”œâ”€â”€â†’ Sub-response B: GDPR analysis
+     â”‚
+     â””â”€â”€â†’ Synthesis: Comparison and contrast
 ```
 
 ### 7.4 Header Output
@@ -340,7 +342,7 @@ Real-time token-by-token delivery via Server-Sent Events (SSE). The DPE runs in 
 ### 9.2 Pass-Through DPE
 
 In `pass-through` mode, the DPE runs a lightweight real-time analysis:
-- Fabrication patterns detected mid-stream can trigger `CRP-Safety-Stop-Inject` (CRP-SPEC-005) — the gateway injects a stop sequence to terminate the completion
+- Fabrication patterns detected mid-stream can trigger `CRP-Safety-Stop-Inject` (CRP-SPEC-005) â€” the gateway injects a stop sequence to terminate the completion
 - Full DPE analysis runs on the complete response after streaming finishes
 - Final risk headers are emitted as an SSE event: `event: crp-headers\ndata: {"CRP-Safety-Hallucination-Risk": "LOW", ...}`
 
@@ -357,7 +359,7 @@ Pass-through mode means the client receives tokens BEFORE DPE analysis completes
 - The trailing SSE event carries `CRP-Safety-Hallucination-Risk: CRITICAL`
 - A violation report is fired to `report-uri`
 - The audit trail records the violation
-- But the client has already received the tokens — the halt cannot be retroactive
+- But the client has already received the tokens â€” the halt cannot be retroactive
 
 For this reason, `CRP-Safety-Mode: strict` MUST use `buffer` mode, not `pass-through`.
 
@@ -367,7 +369,7 @@ For this reason, `CRP-Safety-Mode: strict` MUST use `buffer` mode, not `pass-thr
 
 ### 10.1 Description
 
-Parallel delegation of sub-tasks to independent processing paths. See CRP-SPEC-004 §6 for the complete DAG specification.
+Parallel delegation of sub-tasks to independent processing paths. See CRP-SPEC-004 Â§6 for the complete DAG specification.
 
 ### 10.2 Dispatch Semantics
 
@@ -375,7 +377,7 @@ The gateway creates N child windows from a single parent:
 1. Decomposes the task into N independent sub-tasks
 2. Creates N child WindowNodes in the DAG
 3. Dispatches each child independently (may use different strategies per child)
-4. Each child receives the parent's safety budget (not divided — see CRP-SPEC-004 §6.4)
+4. Each child receives the parent's safety budget (not divided â€” see CRP-SPEC-004 Â§6.4)
 
 ### 10.3 Header Output
 
@@ -391,7 +393,7 @@ CRP-Agent-Session-Parent: crp_sess_parent_...
 
 ### 11.1 Description
 
-Merge results from multiple parallel windows into a single synthesis. See CRP-SPEC-004 §7 for the complete merge protocol.
+Merge results from multiple parallel windows into a single synthesis. See CRP-SPEC-004 Â§7 for the complete merge protocol.
 
 ### 11.2 Dispatch Semantics
 
@@ -418,46 +420,46 @@ CRP-Agent-Safety-Budget: 0.31    (minimum across merged children)
 
 ```
 Is CRP-Accept-Strategy set?
-├── YES → Use specified strategy
-└── NO → TaskIntent analysis:
-    ├── SIMPLE_QA → push
-    ├── DOCUMENT_EXTRACTION → pull
-    ├── VERIFIED_ANSWER → reflexive
-    ├── MULTI_STEP_TASK → agentic
-    ├── COMPARISON_SYNTHESIS → hierarchical
-    ├── BULK_PROCESSING → batch
-    ├── REAL_TIME → streaming
-    └── PARALLEL_SUBTASKS → fan-out → fan-in
+â”œâ”€â”€ YES â†’ Use specified strategy
+â””â”€â”€ NO â†’ TaskIntent analysis:
+    â”œâ”€â”€ SIMPLE_QA â†’ push
+    â”œâ”€â”€ DOCUMENT_EXTRACTION â†’ pull
+    â”œâ”€â”€ VERIFIED_ANSWER â†’ reflexive
+    â”œâ”€â”€ MULTI_STEP_TASK â†’ agentic
+    â”œâ”€â”€ COMPARISON_SYNTHESIS â†’ hierarchical
+    â”œâ”€â”€ BULK_PROCESSING â†’ batch
+    â”œâ”€â”€ REAL_TIME â†’ streaming
+    â””â”€â”€ PARALLEL_SUBTASKS â†’ fan-out â†’ fan-in
 
 Post-dispatch override:
-├── DPE risk HIGH + upgrade-on-risk set → upgrade to specified strategy
-├── DPE repetition SEVERE → re-dispatch as reflexive
-└── DPE flow < 0.30 → re-dispatch with flow augmentation
+â”œâ”€â”€ DPE risk HIGH + upgrade-on-risk set â†’ upgrade to specified strategy
+â”œâ”€â”€ DPE repetition SEVERE â†’ re-dispatch as reflexive
+â””â”€â”€ DPE flow < 0.30 â†’ re-dispatch with flow augmentation
 ```
 
 ### 12.2 Strategy Compatibility with Safety Modes
 
 | Strategy | strict | warn | permissive |
 |----------|--------|------|-----------|
-| push | ✓ (buffer mode) | ✓ | ✓ |
-| pull | ✓ | ✓ | ✓ |
-| reflexive | ✓ (recommended) | ✓ | ✓ |
-| agentic | ✓ (with budget floor) | ✓ | ✓ |
-| hierarchical | ✓ | ✓ | ✓ |
-| batch | ✓ | ✓ | ✓ |
-| streaming | buffer mode only | ✓ | ✓ |
-| fan-out | ✓ | ✓ | ✓ |
-| fan-in | ✓ | ✓ | ✓ |
+| push | âœ“ (buffer mode) | âœ“ | âœ“ |
+| pull | âœ“ | âœ“ | âœ“ |
+| reflexive | âœ“ (recommended) | âœ“ | âœ“ |
+| agentic | âœ“ (with budget floor) | âœ“ | âœ“ |
+| hierarchical | âœ“ | âœ“ | âœ“ |
+| batch | âœ“ | âœ“ | âœ“ |
+| streaming | buffer mode only | âœ“ | âœ“ |
+| fan-out | âœ“ | âœ“ | âœ“ |
+| fan-in | âœ“ | âœ“ | âœ“ |
 
 ---
 
 ## 13. References
 
-- CRP-SPEC-001 — Core Protocol Specification
-- CRP-SPEC-003 — Context Envelope & Packing
-- CRP-SPEC-004 — Window Continuation & DAG
-- CRP-SPEC-005 — Decision Provenance Engine
+- CRP-SPEC-001 â€” Core Protocol Specification
+- CRP-SPEC-003 â€” Context Envelope & Packing
+- CRP-SPEC-004 â€” Window Continuation & DAG
+- CRP-SPEC-005 â€” Decision Provenance Engine
 
 ---
 
-*Copyright © 2025–2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0. CRP™ is a trademark of AutoCyber AI Pty Ltd.*
+*Copyright Â© 2025â€“2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0. CRPâ„¢ is a trademark of AutoCyber AI Pty Ltd.*

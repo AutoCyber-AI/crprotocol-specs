@@ -1,7 +1,9 @@
+﻿<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright 2025-2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis -->
 # CRP-SPEC-017: Zero-CKF Mode & Progressive Activation
 
 **Document:** CRP-SPEC-017  
-**Title:** Context Relay Protocol (CRP) — Zero-CKF Mode, Onboarding Mode, and Progressive Feature Activation  
+**Title:** Context Relay Protocol (CRP) â€” Zero-CKF Mode, Onboarding Mode, and Progressive Feature Activation  
 **Version:** 3.0.0  
 **Status:** Draft  
 **Author:** Constantinos Vidiniotis, AutoCyber AI Pty Ltd  
@@ -14,7 +16,7 @@
 
 ## Abstract
 
-This document specifies how the CRP protocol operates when the Contextual Knowledge Fabric (CKF) contains no facts — the "Zero-CKF" state encountered by every new customer on day one before any documents have been ingested. It defines the graceful degradation model, the response headers that signal mode transitions, the activation cascade as facts are progressively ingested, and the user-facing UX signals that prevent day-one confusion. This document closes the critical UX gap between "account created" and "fully featured CRP integration" — the moment when, without explicit handling, a developer might mistake the absence of CKF-grounded responses for protocol failure.
+This document specifies how the CRP protocol operates when the Contextual Knowledge Fabric (CKF) contains no facts â€” the "Zero-CKF" state encountered by every new customer on day one before any documents have been ingested. It defines the graceful degradation model, the response headers that signal mode transitions, the activation cascade as facts are progressively ingested, and the user-facing UX signals that prevent day-one confusion. This document closes the critical UX gap between "account created" and "fully featured CRP integration" â€” the moment when, without explicit handling, a developer might mistake the absence of CKF-grounded responses for protocol failure.
 
 ---
 
@@ -39,7 +41,7 @@ The developer reasonably concludes CRP is misconfigured or broken, when in fact 
 CRP defines three operating modes that the Gateway transitions through as the customer's CKF populates:
 
 ```
-ZERO-CKF MODE        →    PARTIAL-CKF MODE      →    FULL-CKF MODE
+ZERO-CKF MODE        â†’    PARTIAL-CKF MODE      â†’    FULL-CKF MODE
 (0 facts)                 (1-999 facts)               (1000+ facts)
 
 Safety: full          Safety: full                Safety: full
@@ -59,7 +61,7 @@ Each mode has clear header signalling so developers, tools, and auditors can imm
 
 **Behaviour:**
 - All DPE Stages 1, 2, 5, 7, 8, 9, 11, 12, 13 run normally (safety features active)
-- DPE Stage 3 (Fidelity Verification) runs in **limited mode** — only fabrication detection on common-knowledge entities; distortion detection requires source facts to compare against (skipped)
+- DPE Stage 3 (Fidelity Verification) runs in **limited mode** â€” only fabrication detection on common-knowledge entities; distortion detection requires source facts to compare against (skipped)
 - DPE Stage 4 (Entailment) runs against the user query itself rather than against the (empty) envelope
 - DPE Stage 6 (Cross-Window Coherence) runs normally on subsequent windows
 - DPE Stage 10 (Omission Detection) is skipped (no envelope facts to compare against)
@@ -73,7 +75,7 @@ CRP-Context-Mode: zero-ckf
 CRP-Context-Quality-Tier: N/A
 CRP-Context-Saturation: 0.0
 CRP-Context-Facts-Used: 0/0
-CRP-Safety-Attribution: PARAMETRIC                    (correctly — there's no envelope)
+CRP-Safety-Attribution: PARAMETRIC                    (correctly â€” there's no envelope)
 CRP-Safety-Hallucination-Risk: <computed normally>    (safety scoring still works)
 CRP-Safety-Grounding-Pct: N/A
 CRP-Provenance-HMAC: <computed normally>              (audit chain still active)
@@ -83,20 +85,20 @@ CRP-Activation-Status: safety-active; context-inactive
 ```
 
 **What still works:**
-- ✅ Hallucination detection (against common-knowledge entities and internal consistency)
-- ✅ Repetition detection (Stage 7)
-- ✅ Completeness verification (Stage 8 — based on query decomposition)
-- ✅ Flow analysis (Stage 9 — for continuation windows)
-- ✅ PII detection
-- ✅ EU AI Act classification (based on registered system type, not response content)
-- ✅ HMAC audit chain
-- ✅ Session token state relay
-- ✅ Safety Policy enforcement (most directives)
+- âœ… Hallucination detection (against common-knowledge entities and internal consistency)
+- âœ… Repetition detection (Stage 7)
+- âœ… Completeness verification (Stage 8 â€” based on query decomposition)
+- âœ… Flow analysis (Stage 9 â€” for continuation windows)
+- âœ… PII detection
+- âœ… EU AI Act classification (based on registered system type, not response content)
+- âœ… HMAC audit chain
+- âœ… Session token state relay
+- âœ… Safety Policy enforcement (most directives)
 
 **What is degraded:**
-- ⚠️ Fidelity verification (no sources to verify against)
-- ⚠️ Attribution analysis (limited to parametric/unverifiable classification)
-- ⚠️ `block-ungrounded` directive in Safety Policy — if set, would block ALL responses in zero-CKF mode; gateway emits warning and downgrades to `warn-ungrounded` with explanation
+- âš ï¸ Fidelity verification (no sources to verify against)
+- âš ï¸ Attribution analysis (limited to parametric/unverifiable classification)
+- âš ï¸ `block-ungrounded` directive in Safety Policy â€” if set, would block ALL responses in zero-CKF mode; gateway emits warning and downgrades to `warn-ungrounded` with explanation
 
 ### 2.2 Partial-CKF Mode
 
@@ -106,19 +108,19 @@ CRP-Activation-Status: safety-active; context-inactive
 - All DPE stages run with available CKF coverage
 - Quality tier is computed but capped at `B` until CKF reaches 1000+ facts
 - 3-phase packing operates on the limited fact set
-- Per-call coverage analysis: if the query has any matching facts (relevance ≥ 0.60), full attribution analysis runs; if not, behaves as zero-CKF for that call only
+- Per-call coverage analysis: if the query has any matching facts (relevance â‰¥ 0.60), full attribution analysis runs; if not, behaves as zero-CKF for that call only
 
 **Response headers emitted:**
 ```
 CRP-Context-Mode: partial-ckf
-CRP-Context-Quality-Tier: <S A B C D — capped at B>
+CRP-Context-Quality-Tier: <S A B C D â€” capped at B>
 CRP-Activation-Status: safety-active; context-emerging; facts=<count>
 CRP-Onboarding-Hint: ingest-more-documents-for-quality-S-A
 ```
 
 **Per-call adaptive behaviour:**
-- Query has CKF matches → standard CRP-Standard processing
-- Query has no CKF matches → mode is effectively zero-CKF for this call; emits `CRP-Context-Cache-Status: MISS; reason=no-relevant-facts`
+- Query has CKF matches â†’ standard CRP-Standard processing
+- Query has no CKF matches â†’ mode is effectively zero-CKF for this call; emits `CRP-Context-Cache-Status: MISS; reason=no-relevant-facts`
 
 ### 2.3 Full-CKF Mode
 
@@ -164,8 +166,8 @@ When the Gateway detects a mode transition for a tenant, it MUST:
 ### 3.3 Mode Stickiness
 
 To prevent flapping at boundaries, transitions are sticky:
-- Partial-CKF → Full-CKF requires sustained 1000+ facts for at least 60 seconds
-- Full-CKF → Partial-CKF requires sustained <1000 facts for at least 5 minutes (prevents brief reindexing from triggering downgrade)
+- Partial-CKF â†’ Full-CKF requires sustained 1000+ facts for at least 60 seconds
+- Full-CKF â†’ Partial-CKF requires sustained <1000 facts for at least 5 minutes (prevents brief reindexing from triggering downgrade)
 
 ---
 
@@ -173,7 +175,7 @@ To prevent flapping at boundaries, transitions are sticky:
 
 ### 4.1 Definition
 
-Independent of CKF state, the Gateway tracks an "onboarding period" — the first 14 days after account creation. During this period, additional UX-supportive headers are emitted regardless of CKF state.
+Independent of CKF state, the Gateway tracks an "onboarding period" â€” the first 14 days after account creation. During this period, additional UX-supportive headers are emitted regardless of CKF state.
 
 ### 4.2 Onboarding Period Headers
 
@@ -201,7 +203,7 @@ This single header gives developers a constantly-updated "what should I do next"
 ### 4.4 Onboarding Dashboard
 
 CRP Comply provides an onboarding dashboard at `/onboarding` showing:
-- Setup progress (account ✓, API key ✓, first call pending)
+- Setup progress (account âœ“, API key âœ“, first call pending)
 - Each header's current value with explanation
 - Direct CTAs for each pending step
 - Sample code snippets for common integrations
@@ -213,28 +215,28 @@ CRP Comply provides an onboarding dashboard at `/onboarding` showing:
 ### 5.1 Feature Activation by CKF Milestone
 
 ```
-0 facts          → Safety-only mode
+0 facts          â†’ Safety-only mode
                    Active: DPE Stages 1, 2 (limited), 5, 6, 7, 8, 9, 11, 12, 13
                    Inactive: Stage 3 distortion detection, Stage 10 omission detection
 
-1+ facts         → Partial attribution analysis active for matching queries
+1+ facts         â†’ Partial attribution analysis active for matching queries
                    
-50+ facts        → Community detection runs; CRP-Memory-CKF-Community starts emitting
+50+ facts        â†’ Community detection runs; CRP-Memory-CKF-Community starts emitting
                    
-100+ facts       → Quality tier can reach B
+100+ facts       â†’ Quality tier can reach B
                    require-grounding directive can be enforced (where matches exist)
                    
-500+ facts       → Quality tier can reach A
+500+ facts       â†’ Quality tier can reach A
                    Cross-document fact relationships meaningful
                    
-1000+ facts      → Quality tier can reach S
+1000+ facts      â†’ Quality tier can reach S
                    Full-CKF mode activated
                    All Safety Policy directives fully enforceable
                    
-10,000+ facts    → CKF Tier 3 (warm) cache fully active
+10,000+ facts    â†’ CKF Tier 3 (warm) cache fully active
                    ETag conditional dispatch significantly improves latency
                    
-100,000+ facts   → Multi-community routing optimisations active
+100,000+ facts   â†’ Multi-community routing optimisations active
                    Recommended to enable scheduled Leiden reclustering
 ```
 
@@ -275,9 +277,9 @@ When `CRP-Context-Mode: zero-ckf` is active, certain Safety Policy directives ar
 | `block-ungrounded` | Auto-downgraded to `warn-ungrounded` with warning header |
 | `require-grounding <N>` | Skipped with warning header (no facts to ground against) |
 | `require-entailment <N>` | Operates against query consistency only |
-| `halt-on CRITICAL` | Active as normal — applies to all safety checks that can run |
-| `upgrade-on-risk reflexive` | Active — reflexive verification still meaningful |
-| `block-pii` | Active — PII detection works without CKF |
+| `halt-on CRITICAL` | Active as normal â€” applies to all safety checks that can run |
+| `upgrade-on-risk reflexive` | Active â€” reflexive verification still meaningful |
+| `block-pii` | Active â€” PII detection works without CKF |
 | `oversight human-review` | Active |
 | `report-uri` | Active |
 
@@ -366,7 +368,7 @@ Default packs are:
 | `CRP-Onboarding-Hint` | RES | Actionable next-step identifier |
 | `CRP-Onboarding-Active` | RES | `true` / `false` |
 | `CRP-Onboarding-Days-Remaining` | RES | Integer |
-| `CRP-Onboarding-Next-Action` | RES | Action identifier (see §4.3) |
+| `CRP-Onboarding-Next-Action` | RES | Action identifier (see Â§4.3) |
 | `CRP-Activation-Status` | RES | Human-readable activation summary |
 | `CRP-Activation-Features` | RES | Comma-separated active feature group list |
 | `CRP-Context-Coverage` | RES | Per-call CKF coverage ratio and quality cap |
@@ -464,7 +466,7 @@ CRP-Safety-Grounding-Pct: 0.834
 
 **The developer sees the mode transition explicitly. Features have activated. Quality is now B (capped). Their AI is now grounded in their own documents.**
 
-### 10.3 Step 3: More Documents → Full Mode
+### 10.3 Step 3: More Documents â†’ Full Mode
 
 After uploading more content over the following days, the developer crosses 1000+ facts:
 
@@ -490,7 +492,7 @@ The GitHub Action (CRP-SPEC-013) reads `CRP-Context-Mode` from the customer's Ga
 INFO: Your CRP Gateway is in zero-ckf mode.
   Safety features are active.
   Context-grounding features will activate once you ingest documents.
-  → Visit comply.crprotocol.io/ckf to upload documents.
+  â†’ Visit comply.crprotocol.io/ckf to upload documents.
 ```
 
 ### 11.2 CRP Comply Dashboard
@@ -498,22 +500,22 @@ INFO: Your CRP Gateway is in zero-ckf mode.
 The Comply dashboard prominently displays the current activation state:
 
 ```
-┌─────────────────────────────────────────────────┐
-│  Your CRP Activation Status                     │
-│                                                  │
-│  Mode: PARTIAL-CKF                              │
-│  Facts: 247 / 1000 for Full mode                │
-│  ░░░░▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒  25%               │
-│                                                  │
-│  ✓ Safety features active                       │
-│  ✓ Audit trail active                           │
-│  ✓ Attribution analysis active                  │
-│  ✓ Fidelity verification active                 │
-│  ○ Quality tier S/A — needs more facts          │
-│  ○ Community routing — needs 250+ facts         │
-│                                                  │
-│  [Ingest more documents] [View activation log]  │
-└─────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Your CRP Activation Status                     â”‚
+â”‚                                                  â”‚
+â”‚  Mode: PARTIAL-CKF                              â”‚
+â”‚  Facts: 247 / 1000 for Full mode                â”‚
+â”‚  â–‘â–‘â–‘â–‘â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’â–’  25%               â”‚
+â”‚                                                  â”‚
+â”‚  âœ“ Safety features active                       â”‚
+â”‚  âœ“ Audit trail active                           â”‚
+â”‚  âœ“ Attribution analysis active                  â”‚
+â”‚  âœ“ Fidelity verification active                 â”‚
+â”‚  â—‹ Quality tier S/A â€” needs more facts          â”‚
+â”‚  â—‹ Community routing â€” needs 250+ facts         â”‚
+â”‚                                                  â”‚
+â”‚  [Ingest more documents] [View activation log]  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 This gives every customer a concrete, visible roadmap from day-one to full activation.
@@ -524,7 +526,7 @@ This gives every customer a concrete, visible roadmap from day-one to full activ
 
 ### 12.1 Mode as Information Disclosure
 
-`CRP-Context-Mode` reveals the tenant's CKF maturity. In adversarial settings (e.g., a customer's API exposed to untrusted clients), this header MAY reveal that the customer is a new user with limited grounding — potentially encouraging probing. Mitigation: customers can configure the Gateway to suppress `CRP-Context-Mode` from responses passed through to end users (it is still emitted internally and stored in the audit trail).
+`CRP-Context-Mode` reveals the tenant's CKF maturity. In adversarial settings (e.g., a customer's API exposed to untrusted clients), this header MAY reveal that the customer is a new user with limited grounding â€” potentially encouraging probing. Mitigation: customers can configure the Gateway to suppress `CRP-Context-Mode` from responses passed through to end users (it is still emitted internally and stored in the audit trail).
 
 ### 12.2 Onboarding Hint Trust
 
@@ -534,12 +536,12 @@ This gives every customer a concrete, visible roadmap from day-one to full activ
 
 ## 13. References
 
-- CRP-SPEC-002 — Header Field Specification
-- CRP-SPEC-003 — Context Envelope & Packing
-- CRP-SPEC-005 — Decision Provenance Engine
-- CRP-SPEC-009 — Contextual Knowledge Fabric
-- CRP-SPEC-016 — Gateway Service Specification
+- CRP-SPEC-002 â€” Header Field Specification
+- CRP-SPEC-003 â€” Context Envelope & Packing
+- CRP-SPEC-005 â€” Decision Provenance Engine
+- CRP-SPEC-009 â€” Contextual Knowledge Fabric
+- CRP-SPEC-016 â€” Gateway Service Specification
 
 ---
 
-*Copyright © 2025–2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0 (specification text). CRP™ is a trademark of AutoCyber AI Pty Ltd.*
+*Copyright Â© 2025â€“2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0 (specification text). CRPâ„¢ is a trademark of AutoCyber AI Pty Ltd.*

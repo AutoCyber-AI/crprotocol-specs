@@ -1,7 +1,9 @@
+﻿<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright 2025-2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis -->
 # CRP-SPEC-014: Conformance & Test Suite Specification
 
 **Document:** CRP-SPEC-014  
-**Title:** Context Relay Protocol (CRP) — Conformance Levels, Test Vectors & Certification Criteria  
+**Title:** Context Relay Protocol (CRP) â€” Conformance Levels, Test Vectors & Certification Criteria  
 **Version:** 3.0.0  
 **Status:** Draft  
 **Author:** Constantinos Vidiniotis, AutoCyber AI Pty Ltd  
@@ -29,11 +31,11 @@ This document specifies the conformance requirements for CRP implementations, de
 | Requirement | Spec Reference | Mandatory Headers |
 |------------|----------------|-------------------|
 | Session management | CRP-SPEC-007 | `CRP-Context-Session-Id`, `CRP-Set-Session`, `CRP-Session-Token` |
-| Hallucination risk scoring | CRP-SPEC-005 §7 | `CRP-Safety-Hallucination-Risk`, `CRP-Safety-Hallucination-Score` |
-| HMAC chain | CRP-SPEC-011 §2 | `CRP-Provenance-HMAC`, `CRP-Provenance-Chain-Integrity` |
-| HTTP 451 halt | CRP-SPEC-002 §13 | Must return 451 on CRITICAL risk when `halt-on CRITICAL` is set |
-| Protocol version | CRP-SPEC-002 §4.15 | `CRP-Context-Protocol-Version` |
-| Axiom 4 (transparency boundary) | CRP-SPEC-001 §3 | CRP headers stripped before LLM provider forwarding |
+| Hallucination risk scoring | CRP-SPEC-005 Â§7 | `CRP-Safety-Hallucination-Risk`, `CRP-Safety-Hallucination-Score` |
+| HMAC chain | CRP-SPEC-011 Â§2 | `CRP-Provenance-HMAC`, `CRP-Provenance-Chain-Integrity` |
+| HTTP 451 halt | CRP-SPEC-002 Â§13 | Must return 451 on CRITICAL risk when `halt-on CRITICAL` is set |
+| Protocol version | CRP-SPEC-002 Â§4.15 | `CRP-Context-Protocol-Version` |
+| Axiom 4 (transparency boundary) | CRP-SPEC-001 Â§3 | CRP headers stripped before LLM provider forwarding |
 
 **Header count:** 7 mandatory headers  
 **DPE requirement:** Stage 1 (claim segmentation) + Stage 5 (risk classification) minimum  
@@ -48,17 +50,17 @@ This document specifies the conformance requirements for CRP implementations, de
 | Requirement | Spec Reference | Additional Mandatory Headers |
 |------------|----------------|------------------------------|
 | Full DPE pipeline (all 13 stages) | CRP-SPEC-005 | All `CRP-Safety-*` response headers |
-| Quality Assurance (RQA) | CRP-SPEC-005 §18 | `CRP-Quality-Score`, `CRP-Quality-Repetition`, `CRP-Quality-Completeness`, `CRP-Quality-Flow` |
+| Quality Assurance (RQA) | CRP-SPEC-005 Â§18 | `CRP-Quality-Score`, `CRP-Quality-Repetition`, `CRP-Quality-Completeness`, `CRP-Quality-Flow` |
 | Safety Policy enforcement | CRP-SPEC-006 | `CRP-Safety-Policy` parsing and enforcement |
 | Context Envelope + Quality Tier | CRP-SPEC-003 | `CRP-Context-Quality-Tier`, `CRP-Context-Saturation`, `CRP-Context-ETag` |
 | Compliance headers | CRP-SPEC-010 | `CRP-Compliance-EU-AI-Act`, `CRP-Compliance-Audit-Trail-Id`, `CRP-Compliance-Audit-Trail-URI` |
 | Provenance headers | CRP-SPEC-011 | `CRP-Provenance-Claim-Count`, `CRP-Provenance-Attribution-Score`, `CRP-Provenance-Fidelity-Score`, `CRP-Provenance-Report-URI` |
 | Continuation support | CRP-SPEC-004 | `CRP-Context-Window`, `CRP-Context-Continuation-Id` |
-| Audit trail export | CRP-SPEC-011 §4 | NDJSON export of audit events |
-| ETag conditional dispatch | CRP-SPEC-003 §11 | `CRP-Context-If-Match` → 304 response |
+| Audit trail export | CRP-SPEC-011 Â§4 | NDJSON export of audit events |
+| ETag conditional dispatch | CRP-SPEC-003 Â§11 | `CRP-Context-If-Match` â†’ 304 response |
 
 **Header count:** All 58 headers emitted when applicable  
-**DPE requirement:** Full 13-stage pipeline including RQA (Stages 6–9)  
+**DPE requirement:** Full 13-stage pipeline including RQA (Stages 6â€“9)  
 **Use case:** Production deployments, CRP Comply integration, regulatory compliance
 
 ### 1.3 CRP-Full
@@ -71,17 +73,17 @@ This document specifies the conformance requirements for CRP implementations, de
 |------------|----------------|
 | All 9 dispatch strategies | CRP-SPEC-008 |
 | Multi-agent safety budget propagation | CRP-SPEC-012 |
-| Safety Policy inheritance and tightening in agent chains | CRP-SPEC-012 §4 |
-| Circuit breaker state transitions | CRP-SPEC-012 §5 |
-| Fan-out / fan-in DAG with HMAC merge | CRP-SPEC-004 §6, §7, §9.3 |
-| Streaming safety mode (buffer and pass-through) | CRP-SPEC-008 §9 |
-| CRP-Safety-Stop-Inject (mid-stream halt) | CRP-SPEC-005 §1.3 |
-| OCSF audit trail export | CRP-SPEC-011 §4.2 |
-| mTLS client authentication | CRP-SPEC-015 §4.1 |
-| CRP Comply real-time streaming integration | CRP-SPEC-011 §5 |
-| CRP Visualise session data export | — |
-| Industry-specific Safety Policy profiles | CRP-SPEC-006 §6 |
-| Multi-region data residency enforcement | CRP-SPEC-002 §7.7 |
+| Safety Policy inheritance and tightening in agent chains | CRP-SPEC-012 Â§4 |
+| Circuit breaker state transitions | CRP-SPEC-012 Â§5 |
+| Fan-out / fan-in DAG with HMAC merge | CRP-SPEC-004 Â§6, Â§7, Â§9.3 |
+| Streaming safety mode (buffer and pass-through) | CRP-SPEC-008 Â§9 |
+| CRP-Safety-Stop-Inject (mid-stream halt) | CRP-SPEC-005 Â§1.3 |
+| OCSF audit trail export | CRP-SPEC-011 Â§4.2 |
+| mTLS client authentication | CRP-SPEC-015 Â§4.1 |
+| CRP Comply real-time streaming integration | CRP-SPEC-011 Â§5 |
+| CRP Visualise session data export | â€” |
+| Industry-specific Safety Policy profiles | CRP-SPEC-006 Â§6 |
+| Multi-region data residency enforcement | CRP-SPEC-002 Â§7.7 |
 
 **Use case:** CRP Gateway (managed service), CRP Certification program, enterprise deployments
 
@@ -132,7 +134,7 @@ Each test vector is a JSON object defining:
 }
 ```
 
-#### TV-002: Axiom 4 — LLM Provider Header Stripping
+#### TV-002: Axiom 4 â€” LLM Provider Header Stripping
 
 ```json
 {
@@ -178,7 +180,7 @@ Each test vector is a JSON object defining:
 }
 ```
 
-#### TV-004: ETag Conditional Dispatch — 304
+#### TV-004: ETag Conditional Dispatch â€” 304
 
 ```json
 {
@@ -214,18 +216,18 @@ Each test vector is a JSON object defining:
       { "fact_id": "f1", "content": "The EU AI Act was adopted in 2024 by the European Parliament." },
       { "fact_id": "f2", "content": "The Act classifies AI systems into four risk levels." }
     ],
-    "llm_response": "The EU AI Act was adopted in 2024. According to Commissioner Hans Müller, the Act classifies AI systems into four risk levels.",
-    "note": "Hans Müller is a fabricated entity — no such commissioner exists in the envelope or as a known public figure."
+    "llm_response": "The EU AI Act was adopted in 2024. According to Commissioner Hans MÃ¼ller, the Act classifies AI systems into four risk levels.",
+    "note": "Hans MÃ¼ller is a fabricated entity â€” no such commissioner exists in the envelope or as a known public figure."
   },
   "assertions": [
     { "header": "CRP-Safety-Fabrications", "value_gte": 1 },
     { "dpe_report_field": "fabrication_count", "value_gte": 1 },
-    { "dpe_report_contains_entity": "Hans Müller" }
+    { "dpe_report_contains_entity": "Hans MÃ¼ller" }
   ]
 }
 ```
 
-#### TV-011: Distortion Detection — Number Changed
+#### TV-011: Distortion Detection â€” Number Changed
 
 ```json
 {
@@ -286,7 +288,7 @@ Each test vector is a JSON object defining:
 
 ### 2.4 Safety Policy Test Vectors
 
-#### TV-020: Policy Parsing — Valid
+#### TV-020: Policy Parsing â€” Valid
 
 ```json
 {
@@ -309,7 +311,7 @@ Each test vector is a JSON object defining:
 }
 ```
 
-#### TV-021: Policy Parsing — Malformed Rejection
+#### TV-021: Policy Parsing â€” Malformed Rejection
 
 ```json
 {
@@ -323,12 +325,12 @@ Each test vector is a JSON object defining:
   "assertions": [
     { "http_status": 400 },
     { "body_contains": "unknown directive" },
-    { "note": "allow-hallucination is not a valid directive — gateway MUST reject, not silently ignore" }
+    { "note": "allow-hallucination is not a valid directive â€” gateway MUST reject, not silently ignore" }
   ]
 }
 ```
 
-#### TV-022: Policy Inheritance — Tightening Accepted
+#### TV-022: Policy Inheritance â€” Tightening Accepted
 
 ```json
 {
@@ -347,7 +349,7 @@ Each test vector is a JSON object defining:
 }
 ```
 
-#### TV-023: Policy Inheritance — Relaxation Rejected
+#### TV-023: Policy Inheritance â€” Relaxation Rejected
 
 ```json
 {
@@ -368,7 +370,7 @@ Each test vector is a JSON object defining:
 
 ### 2.5 HMAC Chain Test Vectors
 
-#### TV-030: Chain Verification — Valid
+#### TV-030: Chain Verification â€” Valid
 
 ```json
 {
@@ -393,7 +395,7 @@ Each test vector is a JSON object defining:
 }
 ```
 
-#### TV-031: Chain Verification — Broken (Tampered Event)
+#### TV-031: Chain Verification â€” Broken (Tampered Event)
 
 ```json
 {
@@ -414,7 +416,7 @@ Each test vector is a JSON object defining:
 
 ### 2.6 Session Token Test Vectors
 
-#### TV-040: Token Signature Validation — Valid
+#### TV-040: Token Signature Validation â€” Valid
 
 ```json
 {
@@ -480,14 +482,14 @@ Each test vector is a JSON object defining:
 }
 ```
 
-#### TV-051: Budget Depletion → Forced Halt
+#### TV-051: Budget Depletion â†’ Forced Halt
 
 ```json
 {
   "test_id": "TV-051",
   "category": "agent",
   "conformance_level": "full",
-  "description": "Verify session halts when safety budget depletes to ≤ 0.10",
+  "description": "Verify session halts when safety budget depletes to â‰¤ 0.10",
   "input": {
     "budget_before_call": 0.12,
     "call_risk_level": "HIGH"
@@ -495,7 +497,7 @@ Each test vector is a JSON object defining:
   "assertions": [
     { "http_status": 451 },
     { "body_json_field": "crp_halt_reason", "value": "SAFETY_BUDGET_DEPLETED" },
-    { "note": "Budget would be 0.12 - 0.15 = -0.03, which is ≤ 0.10 → halt" }
+    { "note": "Budget would be 0.12 - 0.15 = -0.03, which is â‰¤ 0.10 â†’ halt" }
   ]
 }
 ```
@@ -545,7 +547,7 @@ For IETF Proposed Standard status, at least two independent implementations MUST
 
 When two CRP implementations exist (e.g., the reference Python implementation and a third-party Go implementation):
 
-1. **Client A → Gateway B:** Client using implementation A sends requests to gateway running implementation B. All test vectors must pass.
+1. **Client A â†’ Gateway B:** Client using implementation A sends requests to gateway running implementation B. All test vectors must pass.
 2. **Session Token Relay:** Token issued by Gateway A must be validatable by Gateway B (requires shared master key or compatible key derivation).
 3. **HMAC Chain Verification:** Chain generated by Gateway A must be verifiable by Gateway B.
 4. **Safety Policy Portability:** Policy parsed by Gateway A must produce identical enforcement behaviour in Gateway B.
@@ -592,9 +594,9 @@ Implementations MUST publish a conformance statement:
 ## 6. References
 
 - All CRP-SPEC-001 through CRP-SPEC-013, CRP-SPEC-015
-- IETF BCP 9 — The Internet Standards Process (interoperability requirement)
-- OASIS SARIF v2.1.0 — Test output format compatibility
+- IETF BCP 9 â€” The Internet Standards Process (interoperability requirement)
+- OASIS SARIF v2.1.0 â€” Test output format compatibility
 
 ---
 
-*Copyright © 2025–2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0. CRP™ is a trademark of AutoCyber AI Pty Ltd.*
+*Copyright Â© 2025â€“2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0. CRPâ„¢ is a trademark of AutoCyber AI Pty Ltd.*

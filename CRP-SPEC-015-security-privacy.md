@@ -1,7 +1,9 @@
+﻿<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright 2025-2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis -->
 # CRP-SPEC-015: Security & Privacy Specification
 
 **Document:** CRP-SPEC-015  
-**Title:** Context Relay Protocol — Security & Privacy  
+**Title:** Context Relay Protocol â€” Security & Privacy  
 **Version:** 3.0.0  
 **Status:** Draft  
 **Author:** Constantinos Vidiniotis, AutoCyber AI Pty Ltd  
@@ -21,19 +23,19 @@ This document specifies the security and privacy architecture of the Context Rel
 CRP security operates at four distinct layers:
 
 ```
-┌────────────────────────────────────────────────────────────────┐
-│  Layer 4: Platform Security                                     │
-│  (Gateway infrastructure, tenant isolation, key vault, SOC 2)  │
-├────────────────────────────────────────────────────────────────┤
-│  Layer 3: Protocol Security                                     │
-│  (HMAC chain, session token, nonce, header injection defence)   │
-├────────────────────────────────────────────────────────────────┤
-│  Layer 2: Transport Security                                    │
-│  (TLS 1.3, certificate pinning, mTLS for enterprise)           │
-├────────────────────────────────────────────────────────────────┤
-│  Layer 1: Data Security                                         │
-│  (envelope content isolation, PII detection, no-store policy)  │
-└────────────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚  Layer 4: Platform Security                                     â”‚
+â”‚  (Gateway infrastructure, tenant isolation, key vault, SOC 2)  â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Layer 3: Protocol Security                                     â”‚
+â”‚  (HMAC chain, session token, nonce, header injection defence)   â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Layer 2: Transport Security                                    â”‚
+â”‚  (TLS 1.3, certificate pinning, mTLS for enterprise)           â”‚
+â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤
+â”‚  Layer 1: Data Security                                         â”‚
+â”‚  (envelope content isolation, PII detection, no-store policy)  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -73,7 +75,7 @@ CRP security operates at four distinct layers:
 
 ## 3. Native CRP Security Mechanisms
 
-These are security mechanisms defined by the CRP protocol itself — not external dependencies.
+These are security mechanisms defined by the CRP protocol itself â€” not external dependencies.
 
 ### 3.1 HMAC-SHA256 Audit Chain (Tamper Evidence)
 
@@ -87,8 +89,8 @@ HMAC_n = HMAC-SHA256(
   || timestamp_iso8601
   || content_hash (SHA256 of LLM response)
   || dpe_report_hash (SHA256 of DPE output)
-  || previous_HMAC,   ← chaining
-  session_hmac_key    ← per-session, generated at session init
+  || previous_HMAC,   â† chaining
+  session_hmac_key    â† per-session, generated at session init
 )
 ```
 
@@ -96,13 +98,13 @@ HMAC_n = HMAC-SHA256(
 - Forward integrity: modifying any past record invalidates all subsequent records
 - Verifiable by any party holding the session HMAC key
 - `CRP-Provenance-Chain-Integrity: BROKEN` emitted if verification fails
-- Session HMAC key is derived using HKDF from the session ID and a Gateway master key — customers can export their session HMAC key for independent verification
+- Session HMAC key is derived using HKDF from the session ID and a Gateway master key â€” customers can export their session HMAC key for independent verification
 
 **Regulatory mapping:** GDPR Art. 5(1)(f) (integrity), EU AI Act Art. 64 (logging), ISO 42001 A.9.4
 
 ### 3.2 Session Token (Signed State Relay)
 
-**What it is:** A JWT-like signed token issued by the Gateway carrying session state — the CRP equivalent of a signed HTTP cookie.
+**What it is:** A JWT-like signed token issued by the Gateway carrying session state â€” the CRP equivalent of a signed HTTP cookie.
 
 **Format:**
 ```
@@ -139,8 +141,8 @@ CRP-Set-Session: token=<base64url(payload)>.<base64url(signature)>;
 **What it is:** CRP headers MUST be stripped before forwarding to LLM providers. This is a security boundary, not just an architectural choice.
 
 **Why it's a security mechanism:**
-1. Prevents LLM prompt injection via headers — a malicious LLM cannot read or manipulate CRP headers
-2. Prevents LLM output from appearing to set CRP headers — response headers are injected by the Gateway AFTER the LLM response is received and validated by DPE
+1. Prevents LLM prompt injection via headers â€” a malicious LLM cannot read or manipulate CRP headers
+2. Prevents LLM output from appearing to set CRP headers â€” response headers are injected by the Gateway AFTER the LLM response is received and validated by DPE
 3. Prevents information leakage of safety policy to the model (the model cannot "know" it's being monitored and adjust behaviour accordingly)
 
 **Implementation requirement:** Gateway MUST use a header allowlist for LLM provider requests, not a CRP-prefix denylist. Only explicitly permitted headers (Content-Type, Authorization, etc.) are forwarded.
@@ -160,7 +162,7 @@ CRP-Set-Session: token=<base64url(payload)>.<base64url(signature)>;
 **Rules:**
 1. Gateway MUST reject any request where the client has pre-set `CRP-Safety-*` response headers (these are response-only headers)
 2. Gateway MUST strip any `CRP-Provenance-*` headers from client requests (these are generated internally)
-3. Gateway MUST validate `CRP-Safety-Policy` syntax before accepting a session — malformed directives rejected with HTTP 400
+3. Gateway MUST validate `CRP-Safety-Policy` syntax before accepting a session â€” malformed directives rejected with HTTP 400
 4. Gateway MUST NOT copy any content from LLM response bodies into CRP header values
 
 ### 3.6 CRP-Context-Cache: no-store (Data Minimisation)
@@ -172,7 +174,7 @@ CRP-Set-Session: token=<base64url(payload)>.<base64url(signature)>;
 **Effect:**
 - Facts from this session are NOT written to the persistent CKF graph
 - Session context is held in Tier 1 (session cache) only and purged on session end
-- Comply audit event records metadata headers only — not message content
+- Comply audit event records metadata headers only â€” not message content
 - GDPR Art. 5(1)(c) data minimisation compliance
 
 ### 3.7 PII Detection and Flagging
@@ -184,7 +186,7 @@ CRP-Set-Session: token=<base64url(payload)>.<base64url(signature)>;
 **Actions configurable via Safety Policy:**
 - `block-pii` directive: Gateway blocks the request/response if PII is detected
 - `warn-pii` directive (default): passes with header flag, fires report-uri webhook
-- PII detection does NOT redact content — it flags for application-layer handling
+- PII detection does NOT redact content â€” it flags for application-layer handling
 
 ---
 
@@ -227,12 +229,12 @@ LLM provider credentials in the Gateway key vault MUST be encrypted at rest usin
 
 ### 4.5 JWT-compatible Session Tokens
 
-Session tokens use JWT-compatible structure (base64url header.payload.signature) but use HMAC-SHA256 rather than RS256/ES256. This is intentional — asymmetric signatures are unnecessary for Gateway-issued tokens validated by the same Gateway. The structure is JWT-like for tooling compatibility.
+Session tokens use JWT-compatible structure (base64url header.payload.signature) but use HMAC-SHA256 rather than RS256/ES256. This is intentional â€” asymmetric signatures are unnecessary for Gateway-issued tokens validated by the same Gateway. The structure is JWT-like for tooling compatibility.
 
 ### 4.6 OAuth 2.0 / API Key Authentication
 
 **CRP Gateway API keys:**
-- Format: `crp_gw_[env]_[32-char random]` — prefix allows programmatic detection
+- Format: `crp_gw_[env]_[32-char random]` â€” prefix allows programmatic detection
 - Scoped: keys can be scoped to specific Safety Policy levels, CKF namespaces, or IP ranges
 - Rotatable: customers can rotate keys without service interruption
 - Never logged: API keys MUST NOT appear in access logs (only key prefix logged)
@@ -255,7 +257,7 @@ Requirements for production CRP Gateway deployments:
 
 - Provider credentials (OpenAI API keys, Anthropic API keys, etc.) MUST be stored encrypted in an HSM-backed key vault
 - Credentials MUST NOT be logged or included in error messages
-- Credential access MUST be audited — every LLM provider call logs which credential was used
+- Credential access MUST be audited â€” every LLM provider call logs which credential was used
 - Credential rotation MUST NOT require application restart
 
 ### 5.3 Audit and Observability
@@ -271,9 +273,9 @@ For enterprise customer trust, AutoCyber AI MUST obtain:
 
 | Certification | Priority | Timeline |
 |--------------|----------|----------|
-| SOC 2 Type II | P1 — required for enterprise sales | 6–12 months |
-| ISO 27001 | P1 — required for EU customers | 12–18 months |
-| ISO 42001 (AI) | P1 — required (we build compliance tools) | 12–18 months |
+| SOC 2 Type II | P1 â€” required for enterprise sales | 6â€“12 months |
+| ISO 27001 | P1 â€” required for EU customers | 12â€“18 months |
+| ISO 42001 (AI) | P1 â€” required (we build compliance tools) | 12â€“18 months |
 | Cyber Essentials Plus (UK/AU) | P2 | 6 months |
 | PCI DSS (if handling payment data) | P3 | Only if applicable |
 
@@ -285,7 +287,7 @@ For enterprise customer trust, AutoCyber AI MUST obtain:
 
 | Data Category | GDPR Basis | Retention | Customer Control |
 |--------------|-----------|-----------|-----------------|
-| AI call metadata (headers, risk scores) | Legitimate interest / Contract | Configurable (30d–5yr) | Export + delete |
+| AI call metadata (headers, risk scores) | Legitimate interest / Contract | Configurable (30dâ€“5yr) | Export + delete |
 | AI call content (prompts/responses) | Contract | Not stored by default (no-store) | Not applicable |
 | CKF knowledge graph content | Contract | Persistent until deleted | Full export + delete |
 | Audit trail (HMAC chain) | Legal obligation | Minimum 2yr (EU AI Act Art.64) | Export, delete after retention |
@@ -294,9 +296,9 @@ For enterprise customer trust, AutoCyber AI MUST obtain:
 ### 6.2 Data Residency
 
 `CRP-Compliance-Data-Residency` header declares jurisdiction:
-- `EU` — data processed and stored in EU regions only (Frankfurt, Dublin)
-- `AU` — data processed and stored in Australia only (Sydney, Melbourne)
-- `US` — data processed and stored in US regions only (Virginia, Oregon)
+- `EU` â€” data processed and stored in EU regions only (Frankfurt, Dublin)
+- `AU` â€” data processed and stored in Australia only (Sydney, Melbourne)
+- `US` â€” data processed and stored in US regions only (Virginia, Oregon)
 
 AutoCyber AI MUST provide region-specific Gateway deployments to honour this header.
 
@@ -308,7 +310,7 @@ AutoCyber AI MUST publish and contractually commit:
 
 This commitment MUST appear in:
 - Terms of Service
-- Data Processing Agreement (DPA) — required for GDPR customers
+- Data Processing Agreement (DPA) â€” required for GDPR customers
 - SOC 2 Type II audit scope
 
 ### 6.4 Right to Erasure (GDPR Art. 17)
@@ -316,7 +318,7 @@ This commitment MUST appear in:
 CRP MUST support:
 1. **Session erasure:** Delete specific session's audit trail and CKF contributions
 2. **Account erasure:** Delete all customer data within 30 days of contract termination
-3. **HMAC chain truncation:** If audit records are erased, the chain is marked as TRUNCATED from that point — partial erasure is documented, not silently modified
+3. **HMAC chain truncation:** If audit records are erased, the chain is marked as TRUNCATED from that point â€” partial erasure is documented, not silently modified
 
 ---
 
@@ -345,8 +347,8 @@ And the full CRP response header set (per CRP-SPEC-002).
 When running the CRP sidecar self-hosted:
 1. Generate session HMAC keys using a cryptographically secure random source (CSPRNG)
 2. Store the HMAC master key outside the sidecar process (environment variable minimum; HSM recommended)
-3. Enable TLS on the sidecar HTTP interface — do not expose plain HTTP outside localhost
-4. Implement rate limiting on the sidecar endpoint — CRP does not provide built-in rate limiting
+3. Enable TLS on the sidecar HTTP interface â€” do not expose plain HTTP outside localhost
+4. Implement rate limiting on the sidecar endpoint â€” CRP does not provide built-in rate limiting
 5. Pin the CRP sidecar version and verify SHA256 checksums of release packages
 
 ### 8.2 Browser/Client Exposure
@@ -359,9 +361,9 @@ CRP session tokens MUST NOT be exposed to browser JavaScript:
 ### 8.3 Multi-Agent Environments
 
 In multi-agent deployments:
-1. Each agent in a chain MUST have its own scoped CRP API key — do not share keys between agents
-2. `CRP-Agent-Session-Parent` MUST be validated by the receiving agent — not blindly trusted
-3. Safety Budget (`CRP-Agent-Safety-Budget`) MUST be read from the incoming header and respected — agents MUST halt if budget ≤ 0.05
+1. Each agent in a chain MUST have its own scoped CRP API key â€” do not share keys between agents
+2. `CRP-Agent-Session-Parent` MUST be validated by the receiving agent â€” not blindly trusted
+3. Safety Budget (`CRP-Agent-Safety-Budget`) MUST be read from the incoming header and respected â€” agents MUST halt if budget â‰¤ 0.05
 4. `CRP-Safety-Policy` received from an upstream agent MAY be tightened but MUST NOT be relaxed
 
 ---
@@ -378,19 +380,19 @@ Response SLA: Initial acknowledgement within 24 hours. Patch/advisory within 90 
 
 ## 10. References
 
-- RFC 2104 — HMAC: Keyed-Hashing for Message Authentication
-- RFC 5869 — HMAC-based Extract-and-Expand Key Derivation Function (HKDF)
-- RFC 7519 — JSON Web Token (JWT)
-- RFC 9110 — HTTP Semantics
-- RFC 6265 — HTTP State Management Mechanism (Cookies)
-- FIPS PUB 198-1 — The Keyed-Hash Message Authentication Code (HMAC)
-- NIST SP 800-57 — Recommendation for Key Management
+- RFC 2104 â€” HMAC: Keyed-Hashing for Message Authentication
+- RFC 5869 â€” HMAC-based Extract-and-Expand Key Derivation Function (HKDF)
+- RFC 7519 â€” JSON Web Token (JWT)
+- RFC 9110 â€” HTTP Semantics
+- RFC 6265 â€” HTTP State Management Mechanism (Cookies)
+- FIPS PUB 198-1 â€” The Keyed-Hash Message Authentication Code (HMAC)
+- NIST SP 800-57 â€” Recommendation for Key Management
 - OWASP API Security Top 10 (2023)
 - EU AI Act Art. 9 (Risk management), Art. 13 (Transparency), Art. 14 (Oversight), Art. 64 (Logging)
 - GDPR Art. 5 (Principles), Art. 17 (Right to erasure), Art. 25 (Privacy by design), Art. 32 (Security)
-- ISO/IEC 27001:2022 — Information Security Management
-- ISO/IEC 42001:2023 — AI Management Systems
+- ISO/IEC 27001:2022 â€” Information Security Management
+- ISO/IEC 42001:2023 â€” AI Management Systems
 
 ---
 
-*Copyright © 2025–2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0 (specification text).*
+*Copyright Â© 2025â€“2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0 (specification text).*

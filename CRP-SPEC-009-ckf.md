@@ -1,7 +1,9 @@
+﻿<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright 2025-2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis -->
 # CRP-SPEC-009: Contextual Knowledge Fabric (CKF) Specification
 
 **Document:** CRP-SPEC-009  
-**Title:** Context Relay Protocol (CRP) — Contextual Knowledge Fabric  
+**Title:** Context Relay Protocol (CRP) â€” Contextual Knowledge Fabric  
 **Version:** 3.0.0  
 **Status:** Draft  
 **Author:** Constantinos Vidiniotis, AutoCyber AI Pty Ltd  
@@ -14,26 +16,26 @@
 
 ## Abstract
 
-This document specifies the Contextual Knowledge Fabric (CKF) — CRP's persistent knowledge graph that serves as Tier 3 (cold storage) in the four-tier memory hierarchy. The CKF stores facts as graph-embedded nodes with vector representations, connected by semantic edges, and organised into communities via the Leiden algorithm. It is the long-term memory from which Context Envelopes are assembled, and the persistence layer that enables cross-session knowledge reuse, conditional dispatch via ETag caching, and knowledge staleness tracking.
+This document specifies the Contextual Knowledge Fabric (CKF) â€” CRP's persistent knowledge graph that serves as Tier 3 (cold storage) in the four-tier memory hierarchy. The CKF stores facts as graph-embedded nodes with vector representations, connected by semantic edges, and organised into communities via the Leiden algorithm. It is the long-term memory from which Context Envelopes are assembled, and the persistence layer that enables cross-session knowledge reuse, conditional dispatch via ETag caching, and knowledge staleness tracking.
 
 ---
 
 ## 1. Architecture Overview
 
 ```
-┌─────────────────────────────────────────────────────────┐
-│                 Contextual Knowledge Fabric              │
-│                                                          │
-│  ┌───────────┐   ┌───────────┐   ┌───────────────────┐ │
-│  │ Fact Store │   │ HNSW Index│   │ Community Graph   │ │
-│  │ (nodes)   │◄──│ (vectors) │──►│ (Leiden clusters) │ │
-│  └───────────┘   └───────────┘   └───────────────────┘ │
-│        │                                    │            │
-│  ┌─────▼──────┐                   ┌────────▼────────┐  │
-│  │ Source      │                   │ State Hash      │  │
-│  │ Registry   │                   │ (ETag source)   │  │
-│  └────────────┘                   └─────────────────┘  │
-└─────────────────────────────────────────────────────────┘
+â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+â”‚                 Contextual Knowledge Fabric              â”‚
+â”‚                                                          â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”‚
+â”‚  â”‚ Fact Store â”‚   â”‚ HNSW Indexâ”‚   â”‚ Community Graph   â”‚ â”‚
+â”‚  â”‚ (nodes)   â”‚â—„â”€â”€â”‚ (vectors) â”‚â”€â”€â–ºâ”‚ (Leiden clusters) â”‚ â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â”‚
+â”‚        â”‚                                    â”‚            â”‚
+â”‚  â”Œâ”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”                   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â–¼â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+â”‚  â”‚ Source      â”‚                   â”‚ State Hash      â”‚  â”‚
+â”‚  â”‚ Registry   â”‚                   â”‚ (ETag source)   â”‚  â”‚
+â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
 ```
 
 ---
@@ -44,13 +46,13 @@ Each fact in the CKF is stored as a node with the following fields:
 
 ```
 FactNode {
-  fact_id:             string       // UUID — immutable after creation
-  content:             string       // The fact text (1–2048 tokens max)
+  fact_id:             string       // UUID â€” immutable after creation
+  content:             string       // The fact text (1â€“2048 tokens max)
   content_hash:        string       // SHA-256 of content (change detection)
   embedding:           float[]      // Vector embedding (model-specific dimensionality)
   source_id:           string       // Reference to originating document in Source Registry
   source_location:     string       // Page number, paragraph, URL fragment
-  importance_weight:   float        // 0.0–1.0, intrinsic to the fact
+  importance_weight:   float        // 0.0â€“1.0, intrinsic to the fact
   community_label:     string       // Leiden community assignment
   ingested_at:         ISO 8601     // Timestamp of initial ingestion
   modified_at:         ISO 8601     // Timestamp of last modification
@@ -66,20 +68,20 @@ FactNode {
 
 - Minimum content length: 10 tokens
 - Maximum content length: 2,048 tokens
-- Facts exceeding 2,048 tokens MUST be chunked during ingestion (see §4)
+- Facts exceeding 2,048 tokens MUST be chunked during ingestion (see Â§4)
 
 ### 2.2 Fact Status Lifecycle
 
 ```
-ACTIVE ──→ STALE (ttl expired, manual flag, or source document updated)
-ACTIVE ──→ DELETED (source document removed, GDPR erasure request)
-ACTIVE ──→ QUARANTINED (flagged by DPE as producing fabrication/distortion)
-STALE  ──→ ACTIVE (re-ingested from updated source)
-STALE  ──→ DELETED (manual cleanup)
-DELETED ──→ (permanent removal from HNSW index after 30 days)
+ACTIVE â”€â”€â†’ STALE (ttl expired, manual flag, or source document updated)
+ACTIVE â”€â”€â†’ DELETED (source document removed, GDPR erasure request)
+ACTIVE â”€â”€â†’ QUARANTINED (flagged by DPE as producing fabrication/distortion)
+STALE  â”€â”€â†’ ACTIVE (re-ingested from updated source)
+STALE  â”€â”€â†’ DELETED (manual cleanup)
+DELETED â”€â”€â†’ (permanent removal from HNSW index after 30 days)
 ```
 
-Facts with status `STALE` MAY still be retrieved during envelope construction but receive a freshness penalty in the ranking phase (CRP-SPEC-003 §6.4). Facts with status `DELETED` or `QUARANTINED` MUST NOT be retrieved.
+Facts with status `STALE` MAY still be retrieved during envelope construction but receive a freshness penalty in the ranking phase (CRP-SPEC-003 Â§6.4). Facts with status `DELETED` or `QUARANTINED` MUST NOT be retrieved.
 
 ---
 
@@ -87,7 +89,7 @@ Facts with status `STALE` MAY still be retrieved during envelope construction bu
 
 ### 3.1 Purpose
 
-The Hierarchical Navigable Small World (HNSW) index provides sub-linear approximate nearest-neighbour search over fact embeddings, enabling fast retrieval during envelope construction Phase 1 (CRP-SPEC-003 §5).
+The Hierarchical Navigable Small World (HNSW) index provides sub-linear approximate nearest-neighbour search over fact embeddings, enabling fast retrieval during envelope construction Phase 1 (CRP-SPEC-003 Â§5).
 
 ### 3.2 Configuration Parameters
 
@@ -112,7 +114,7 @@ If the CRP deployment changes embedding models (e.g., upgrading from text-embedd
 - All existing facts MUST be re-embedded with the new model
 - The HNSW index MUST be rebuilt
 - During migration, dual indexes MAY run in parallel
-- The CKF state hash (ETag) changes on embedding model change — all client ETags are invalidated
+- The CKF state hash (ETag) changes on embedding model change â€” all client ETags are invalidated
 
 ---
 
@@ -121,7 +123,7 @@ If the CRP deployment changes embedding models (e.g., upgrading from text-embedd
 ### 4.1 Ingestion Flow
 
 ```
-Source Document → Chunking → Fact Extraction → Embedding → HNSW Insert → Community Update
+Source Document â†’ Chunking â†’ Fact Extraction â†’ Embedding â†’ HNSW Insert â†’ Community Update
 ```
 
 ### 4.2 Chunking Strategy
@@ -136,8 +138,8 @@ Documents are chunked using a semantic-aware chunking strategy:
 ### 4.3 Fact Extraction
 
 Each chunk becomes one or more facts:
-- Simple chunks (single coherent assertion) → 1 fact
-- Complex chunks (multiple assertions) → decomposed into N facts using the claim segmentation model (same as DPE Stage 1, CRP-SPEC-005 §3)
+- Simple chunks (single coherent assertion) â†’ 1 fact
+- Complex chunks (multiple assertions) â†’ decomposed into N facts using the claim segmentation model (same as DPE Stage 1, CRP-SPEC-005 Â§3)
 
 ### 4.4 Importance Weight Assignment
 
@@ -181,7 +183,7 @@ When a source document is updated:
 ### 5.1 Purpose
 
 The Leiden algorithm clusters semantically related facts into communities. Communities enable:
-- Targeted retrieval expansion (CRP-SPEC-003 §5.2 Step 1.3)
+- Targeted retrieval expansion (CRP-SPEC-003 Â§5.2 Step 1.3)
 - Knowledge domain identification (emitted as `CRP-Memory-CKF-Community`)
 - Diversity scoring in the ranking phase
 
@@ -189,7 +191,7 @@ The Leiden algorithm clusters semantically related facts into communities. Commu
 
 Before running Leiden, a similarity graph is constructed:
 1. For each fact, find K nearest neighbours in the HNSW index (default K=20)
-2. Create edges between facts with cosine similarity ≥ 0.60
+2. Create edges between facts with cosine similarity â‰¥ 0.60
 3. Edge weight = cosine similarity value
 
 ### 5.3 Leiden Parameters
@@ -207,10 +209,10 @@ Each community is assigned a human-readable label by sampling the 5 highest-impo
 ### 5.5 Reclustering Schedule
 
 Communities are recomputed:
-- After every ingestion batch of ≥50 new facts
+- After every ingestion batch of â‰¥50 new facts
 - On a scheduled basis (default: weekly)
 - When explicitly triggered by the operator
-- Reclustering changes the CKF state hash → invalidates all client ETags
+- Reclustering changes the CKF state hash â†’ invalidates all client ETags
 
 ---
 
@@ -240,7 +242,7 @@ It does NOT change when:
 
 ### 6.3 ETag Emission
 
-The CKF state hash is the source for `CRP-Context-ETag` (CRP-SPEC-002 §4.8).
+The CKF state hash is the source for `CRP-Context-ETag` (CRP-SPEC-002 Â§4.8).
 
 ---
 
@@ -253,7 +255,7 @@ The CKF state hash is the source for `CRP-Context-ETag` (CRP-SPEC-002 §4.8).
 | `reuse-ckf` | Read from CKF but do not trigger source re-ingestion |
 | `no-store` | Do not write this session's facts to CKF. Read is still permitted. |
 | `no-cache` | Ignore cached envelope; force full Phase 1 retrieval from CKF |
-| `only-if-ckf` | Fail with 424 if CKF has no facts with relevance ≥ 0.50 for this query |
+| `only-if-ckf` | Fail with 424 if CKF has no facts with relevance â‰¥ 0.50 for this query |
 | `max-age=N` | Facts with `ingested_at` older than N seconds are treated as STALE for ranking |
 
 ### 7.2 GDPR-Specific Cache Behaviour
@@ -286,7 +288,7 @@ When a customer requests erasure (GDPR Art. 17):
 1. All facts with the specified `source_id` are marked `DELETED`
 2. The HNSW index excludes deleted facts from search results immediately
 3. Deleted facts are physically removed from storage within 30 days
-4. The CKF state hash is recomputed → all ETags invalidated
+4. The CKF state hash is recomputed â†’ all ETags invalidated
 5. The audit trail records the erasure event (the fact that erasure occurred is retained; the erased content is not)
 
 ### 8.4 Fact Quarantine
@@ -321,12 +323,12 @@ Operators MAY configure shared CKF namespaces accessible by multiple tenants (e.
 
 ## 10. References
 
-- CRP-SPEC-001 — Core Protocol Specification
-- CRP-SPEC-003 — Context Envelope & Packing
-- CRP-SPEC-015 — Security & Privacy
+- CRP-SPEC-001 â€” Core Protocol Specification
+- CRP-SPEC-003 â€” Context Envelope & Packing
+- CRP-SPEC-015 â€” Security & Privacy
 - Malkov, Y. and Yashunin, D. (2018). "Efficient and robust approximate nearest neighbor using Hierarchical Navigable Small World graphs"
 - Traag, V.A., Waltman, L. and van Eck, N.J. (2019). "From Louvain to Leiden: guaranteeing well-connected communities"
 
 ---
 
-*Copyright © 2025–2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0. CRP™ is a trademark of AutoCyber AI Pty Ltd.*
+*Copyright Â© 2025â€“2026 AutoCyber AI Pty Ltd. Licensed under CC BY 4.0. CRPâ„¢ is a trademark of AutoCyber AI Pty Ltd.*

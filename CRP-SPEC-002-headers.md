@@ -1,22 +1,24 @@
+﻿<!-- SPDX-License-Identifier: CC-BY-4.0 -->
+<!-- Copyright 2025-2026 AutoCyber AI Pty Ltd / Constantinos Vidiniotis -->
 # CRP-SPEC-002: Header Field Specification
 
 **Document:** CRP-SPEC-002  
-**Title:** Context Relay Protocol (CRP) — HTTP Header Field Vocabulary  
+**Title:** Context Relay Protocol (CRP) â€” HTTP Header Field Vocabulary  
 **Version:** 3.0.0  
-**Status:** Draft — IANA Registration Candidate  
+**Status:** Draft â€” IANA Registration Candidate  
 **Author:** Constantinos Vidiniotis, AutoCyber AI Pty Ltd  
 **Contact:** contact@crprotocol.io  
-**Repository:** https://github.com/crprotocol/spec  
+**Repository:** https://github.com/AutoCyber-AI/crprotocol-specs  
 **Date:** 2026-05-24  
 **License:** CC BY 4.0 (specification text)  
 **Intended Standard:** IETF Internet-Draft (target: RFC)  
-**IANA Considerations:** Requests registration of `CRP-*` prefix in HTTP Field Name Registry per RFC 9110 §16.3
+**IANA Considerations:** Requests registration of `CRP-*` prefix in HTTP Field Name Registry per RFC 9110 Â§16.3
 
 ---
 
 ## Abstract
 
-This document defines the complete vocabulary of HTTP header fields for the Context Relay Protocol (CRP). CRP header fields carry AI-specific metadata — context quality, safety risk, provenance integrity, regulatory classification, agent state, and memory layer information — as standard HTTP header fields on AI request/response cycles. This specification provides normative definitions for 58 header fields across six namespaces, suitable for provisional registration in the IANA HTTP Field Name Registry.
+This document defines the complete vocabulary of HTTP header fields for the Context Relay Protocol (CRP). CRP header fields carry AI-specific metadata â€” context quality, safety risk, provenance integrity, regulatory classification, agent state, and memory layer information â€” as standard HTTP header fields on AI request/response cycles. This specification provides normative definitions for 58 header fields across six namespaces, suitable for provisional registration in the IANA HTTP Field Name Registry.
 
 ---
 
@@ -26,7 +28,7 @@ This is a working draft. It is intended for submission as an IETF Internet-Draft
 
 All CRP header fields use the `CRP-` prefix. This document requests reservation of the `CRP-` prefix and registration of all named header fields in the IANA HTTP Field Name Registry.
 
-Comments and issues: https://github.com/crprotocol/spec/issues
+Comments and issues: https://github.com/AutoCyber-AI/crprotocol-specs/issues
 
 ---
 
@@ -56,9 +58,9 @@ Comments and issues: https://github.com/crprotocol/spec/issues
 
 ### 1.1 Motivation
 
-HTTP became the universal substrate for networked applications in part because its header mechanism provided a standardised, extensible metadata contract readable by any participant in a request/response chain — clients, servers, proxies, CDNs, WAFs — without parsing message bodies. Cache-Control made web-scale caching possible. Content-Security-Policy made transport-layer browser security possible. Both operate on the principle that metadata declared in headers is more interoperable than metadata embedded in payloads.
+HTTP became the universal substrate for networked applications in part because its header mechanism provided a standardised, extensible metadata contract readable by any participant in a request/response chain â€” clients, servers, proxies, CDNs, WAFs â€” without parsing message bodies. Cache-Control made web-scale caching possible. Content-Security-Policy made transport-layer browser security possible. Both operate on the principle that metadata declared in headers is more interoperable than metadata embedded in payloads.
 
-AI inference calls — requests to large language models — currently carry no standardised metadata about the quality, safety, or governance status of their responses. Every application operator instruments this separately, producing non-interoperable, non-verifiable, non-portable safety signals.
+AI inference calls â€” requests to large language models â€” currently carry no standardised metadata about the quality, safety, or governance status of their responses. Every application operator instruments this separately, producing non-interoperable, non-verifiable, non-portable safety signals.
 
 CRP header fields apply the HTTP lesson to AI: standardised metadata in headers, readable by any participant in the AI call chain, without parsing inference payloads.
 
@@ -86,9 +88,9 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 ### 2.1 Directionality Notation
 
-- **REQ** — Header is sent in the HTTP *request* (client → gateway)
-- **RES** — Header is sent in the HTTP *response* (gateway → client)
-- **BOTH** — Header appears in both request and response (semantics may differ)
+- **REQ** â€” Header is sent in the HTTP *request* (client â†’ gateway)
+- **RES** â€” Header is sent in the HTTP *response* (gateway â†’ client)
+- **BOTH** â€” Header appears in both request and response (semantics may differ)
 
 ### 2.2 Value Notation
 
@@ -98,7 +100,7 @@ Header value syntax is described using ABNF [RFC5234]. The following base rules 
 crp-token     = 1*( ALPHA / DIGIT / "-" / "_" / "." )
 crp-hash      = "sha256:" 64HEXDIG
 crp-float     = 1*DIGIT "." 1*DIGIT
-crp-fraction  = crp-float  ; constrained to 0.0 – 1.0
+crp-fraction  = crp-float  ; constrained to 0.0 â€“ 1.0
 crp-uri       = <URI as defined in RFC 3986>
 crp-iso8601   = <date-time as defined in ISO 8601>
 crp-version   = 1*DIGIT "." 1*DIGIT "." 1*DIGIT
@@ -119,13 +121,13 @@ CRP header fields follow these design principles, derived from existing HTTP hea
 
 **3.1 One signal, one header.** Each header carries a single, clearly defined signal. Composite values (e.g., `CRP-Safety-Distortions: NUMBER_CHANGED:2, NEGATION_FLIP:1`) use structured syntax where multiple values must be carried.
 
-**3.2 Machine-readable values.** All values are designed for programmatic parsing by middleware, WAFs, and logging systems — not just human reading. Enum values use SCREAMING_SNAKE_CASE. Numeric values use decimal notation.
+**3.2 Machine-readable values.** All values are designed for programmatic parsing by middleware, WAFs, and logging systems â€” not just human reading. Enum values use SCREAMING_SNAKE_CASE. Numeric values use decimal notation.
 
 **3.3 Gateway-generated response headers are authoritative.** Response headers emitted by the CRP gateway are computed from live protocol data. They MUST NOT be set by clients and MUST NOT reflect LLM output. The gateway is the sole authoritative source for all `CRP-Safety-*`, `CRP-Provenance-*`, and `CRP-Compliance-*` response headers.
 
 **3.4 Request headers express client preferences, not mandates.** `CRP-Accept-*` and `CRP-Safety-Policy` headers declare what the client wants. The gateway SHOULD honour them; where it cannot (e.g., CKF has no relevant facts), it MUST document the deviation in the corresponding response header.
 
-**3.5 Progressive adoption.** Applications that ignore CRP response headers receive no harm — headers carry metadata, not payload. Applications that read and gate on CRP headers gain safety and governance capability.
+**3.5 Progressive adoption.** Applications that ignore CRP response headers receive no harm â€” headers carry metadata, not payload. Applications that read and gate on CRP headers gain safety and governance capability.
 
 ---
 
@@ -152,11 +154,11 @@ CRP-Context-Quality-Tier = "S" / "A" / "B" / "C" / "D"
 
 | Value | Meaning | Saturation Range | Use |
 |-------|---------|-----------------|-----|
-| `S` | Superior — all critical facts included, optimal relevance | ≥ 0.99 | High-stakes decisions |
-| `A` | High — comprehensive coverage with minor gaps | ≥ 0.95 | Standard production |
-| `B` | Adequate — majority of relevant facts included | ≥ 0.85 | Acceptable for most uses |
-| `C` | Marginal — significant gaps in relevant coverage | ≥ 0.70 | Use with caution |
-| `D` | Deficient — critical facts missing or insufficient context | < 0.70 | Remediation required |
+| `S` | Superior â€” all critical facts included, optimal relevance | â‰¥ 0.99 | High-stakes decisions |
+| `A` | High â€” comprehensive coverage with minor gaps | â‰¥ 0.95 | Standard production |
+| `B` | Adequate â€” majority of relevant facts included | â‰¥ 0.85 | Acceptable for most uses |
+| `C` | Marginal â€” significant gaps in relevant coverage | â‰¥ 0.70 | Use with caution |
+| `D` | Deficient â€” critical facts missing or insufficient context | < 0.70 | Remediation required |
 
 **Example:**
 ```
@@ -291,7 +293,7 @@ CRP-Context-Session-Id: crp_sess_7f3a9bc2d4e1f083
 
 **Direction:** RES  
 **Required:** RECOMMENDED  
-**Stability:** Stable — **NEW in v3.0**
+**Stability:** Stable â€” **NEW in v3.0**
 
 **Definition:** A hash of the current CKF fact-set state used to generate this call's Context Envelope. Analogous to HTTP `ETag`. Enables conditional dispatch: clients presenting this value in `CRP-Context-If-Match` on subsequent calls with the same knowledge domain will receive HTTP 304 if the fact-set has not changed, avoiding redundant envelope reconstruction.
 
@@ -484,7 +486,7 @@ Safety headers carry the output of the Decision Provenance Engine (DPE) for the 
 **Direction:** RES  
 **Required:** REQUIRED (for CRP-Standard and CRP-Full conformance)
 
-**Definition:** The composite hallucination risk classification for the LLM response, computed by the DPE from four weighted signals: attribution (0.35), fidelity (0.25), entailment (0.25), and specificity (0.15). See CRP-SPEC-005 for the complete scoring algorithm. Regulatory amplifiers are applied before classification (see CRP-SPEC-005 §4.3).
+**Definition:** The composite hallucination risk classification for the LLM response, computed by the DPE from four weighted signals: attribution (0.35), fidelity (0.25), entailment (0.25), and specificity (0.15). See CRP-SPEC-005 for the complete scoring algorithm. Regulatory amplifiers are applied before classification (see CRP-SPEC-005 Â§4.3).
 
 **Syntax:**
 ```abnf
@@ -495,9 +497,9 @@ CRP-Safety-Hallucination-Risk = "CRITICAL" / "HIGH" / "MEDIUM" / "LOW"
 
 | Value | Score Range | Protocol Action | Regulatory Mapping |
 |-------|-------------|----------------|-------------------|
-| `CRITICAL` | ≥ 0.70 | HTTP 451 if `halt-on CRITICAL` policy set | EU AI Act Art. 14 (halt) |
-| `HIGH` | ≥ 0.45 | Strategy upgrade if `upgrade-on-risk` set | EU AI Act Art. 13 (warn) |
-| `MEDIUM` | ≥ 0.20 | Pass with headers | EU AI Act Art. 52 |
+| `CRITICAL` | â‰¥ 0.70 | HTTP 451 if `halt-on CRITICAL` policy set | EU AI Act Art. 14 (halt) |
+| `HIGH` | â‰¥ 0.45 | Strategy upgrade if `upgrade-on-risk` set | EU AI Act Art. 13 (warn) |
+| `MEDIUM` | â‰¥ 0.20 | Pass with headers | EU AI Act Art. 52 |
 | `LOW` | < 0.20 | Pass | Compliant |
 
 **Example:**
@@ -623,7 +625,7 @@ CRP-Safety-Distortions: 0
 **Direction:** RES  
 **Required:** OPTIONAL
 
-**Definition:** The count of internal contradictions detected in the response — instances where the response contradicts itself (intra-window) or contradicts an earlier window in the session (cross-window).
+**Definition:** The count of internal contradictions detected in the response â€” instances where the response contradicts itself (intra-window) or contradicts an earlier window in the session (cross-window).
 
 **Syntax:**
 ```abnf
@@ -643,7 +645,7 @@ CRP-Safety-Contradictions: 2; scope=cross-window
 **Direction:** RES  
 **Required:** OPTIONAL
 
-**Definition:** Summary of material omissions detected — cases where the envelope contained information critical to a complete answer that the LLM did not include in the response.
+**Definition:** Summary of material omissions detected â€” cases where the envelope contained information critical to a complete answer that the LLM did not include in the response.
 
 **Syntax:**
 ```abnf
@@ -798,7 +800,7 @@ CRP-Accept-Risk: MEDIUM
 ### 5.15 CRP-Safety-Retry-After
 
 **Direction:** RES  
-**Required:** CONDITIONAL — MUST be sent with HTTP 451
+**Required:** CONDITIONAL â€” MUST be sent with HTTP 451
 
 **Definition:** Indicates when or under what condition the client may retry a halted call. Sent alongside HTTP 451 when a CRITICAL risk halt or UNACCEPTABLE EU AI Act risk classification prevents response delivery.
 
@@ -913,7 +915,7 @@ CRP-Provenance-Chain-Integrity = "VALID" / "BROKEN" / "PARTIAL" / "UNVERIFIED"
 | Value | Meaning |
 |-------|---------|
 | `VALID` | All windows in chain verify correctly |
-| `BROKEN` | One or more windows fail verification — possible tampering |
+| `BROKEN` | One or more windows fail verification â€” possible tampering |
 | `PARTIAL` | Chain verified for available windows; some windows missing |
 | `UNVERIFIED` | Verification not performed (e.g., first window of session) |
 
@@ -1043,7 +1045,7 @@ CRP-Compliance-EU-AI-Act = "UNACCEPTABLE" / "HIGH" / "LIMITED" / "MINIMAL"
 | `UNACCEPTABLE` | Art. 5 | Prohibited. Gateway MUST halt and return HTTP 451. |
 | `HIGH` | Art. 6 + Annex III | Conformity assessment required before deployment |
 | `LIMITED` | Art. 52 | Transparency obligations (disclose AI interaction) |
-| `MINIMAL` | — | No specific obligations beyond general law |
+| `MINIMAL` | â€” | No specific obligations beyond general law |
 
 **Example:**
 ```
@@ -1138,7 +1140,7 @@ CRP-Compliance-Audit-Trail-Id: crp_trail_7fa3bc9e2d14f5a8
 **Direction:** RES  
 **Required:** RECOMMENDED
 
-**Definition:** Deep-link URI to the full regulatory evidence pack for this call in CRP Comply. Any downstream system — log aggregator, SIEM, auditor tool — that captures this header can navigate directly to the complete compliance record for this specific AI call.
+**Definition:** Deep-link URI to the full regulatory evidence pack for this call in CRP Comply. Any downstream system â€” log aggregator, SIEM, auditor tool â€” that captures this header can navigate directly to the complete compliance record for this specific AI call.
 
 **Syntax:**
 ```abnf
@@ -1193,7 +1195,7 @@ CRP-Compliance-Controls-Met: 33/35
 
 ## 8. Namespace: CRP-Agent-*
 
-Agent headers carry state for agentic dispatch sessions — calls using `dispatch_agentic()`, `dispatch_hierarchical()`, `dispatch_fan_out()`, or `dispatch_fan_in()`. They are relevant only when `CRP-Context-Strategy` indicates an agentic dispatch mode.
+Agent headers carry state for agentic dispatch sessions â€” calls using `dispatch_agentic()`, `dispatch_hierarchical()`, `dispatch_fan_out()`, or `dispatch_fan_in()`. They are relevant only when `CRP-Context-Strategy` indicates an agentic dispatch mode.
 
 ---
 
@@ -1251,7 +1253,7 @@ CRP-Agent-Loop-Depth: 2
 | `HIGH` | 0.15 |
 | `CRITICAL` | 0.35 |
 
-When the budget reaches ≤ 0.10, the gateway MUST upgrade `CRP-Safety-Oversight-Mode` to `human-review` regardless of Safety Policy. When it reaches ≤ 0.00, the gateway MUST halt and return HTTP 451.
+When the budget reaches â‰¤ 0.10, the gateway MUST upgrade `CRP-Safety-Oversight-Mode` to `human-review` regardless of Safety Policy. When it reaches â‰¤ 0.00, the gateway MUST halt and return HTTP 451.
 
 In requests from orchestrator agents, this header passes the remaining budget down to sub-agents. Sub-agents MUST NOT inflate the budget.
 
@@ -1428,7 +1430,7 @@ CRP-Memory-Knowledge-Age: PT6H
 
 ## 10. Session State Headers
 
-Session state headers are the CRP equivalent of HTTP cookies — they carry signed session state, enabling stateless session relay across language boundaries and gateway instances. Full specification in CRP-SPEC-007.
+Session state headers are the CRP equivalent of HTTP cookies â€” they carry signed session state, enabling stateless session relay across language boundaries and gateway instances. Full specification in CRP-SPEC-007.
 
 ---
 
@@ -1481,18 +1483,18 @@ CRP-Session-Token: eyJzZXNzaW9uX2lkIjoiY3JwX3Nlc3NfN2YzYSJ9.sha256:sig...
 
 ## 11. LLM Configuration Headers
 
-LLM configuration headers allow the CRP gateway to dynamically adjust LLM inference parameters based on session safety state. These headers are used internally by the gateway — clients SHOULD NOT set these directly.
+LLM configuration headers allow the CRP gateway to dynamically adjust LLM inference parameters based on session safety state. These headers are used internally by the gateway â€” clients SHOULD NOT set these directly.
 
 ---
 
 ### 11.1 CRP-LLM-Temperature
 
 **Direction:** Internal (gateway use)  
-**Required:** N/A — internal to gateway
+**Required:** N/A â€” internal to gateway
 
 **Definition:** The temperature value used for the LLM call, after any safety-driven adjustments. Logged in the audit trail.
 
-**Range:** 0.0 – 2.0. Gateway reduces toward 0.2 on reflexive re-dispatch for HIGH-risk sessions.
+**Range:** 0.0 â€“ 2.0. Gateway reduces toward 0.2 on reflexive re-dispatch for HIGH-risk sessions.
 
 ---
 
@@ -1548,8 +1550,8 @@ CRP-LLM-Reproducibility-Seed: 42
 ### 12.1 Safety Policy and Override Headers
 
 When `CRP-Safety-Policy` and `CRP-Safety-Mode` are both present, the **more restrictive** setting applies per-directive:
-- `CRP-Safety-Mode: strict` + `CRP-Safety-Policy: warn-on CRITICAL` → `halt-on CRITICAL` (strict wins)
-- `CRP-Safety-Mode: permissive` + `CRP-Safety-Policy: halt-on CRITICAL` → `halt-on CRITICAL` (policy wins)
+- `CRP-Safety-Mode: strict` + `CRP-Safety-Policy: warn-on CRITICAL` â†’ `halt-on CRITICAL` (strict wins)
+- `CRP-Safety-Mode: permissive` + `CRP-Safety-Policy: halt-on CRITICAL` â†’ `halt-on CRITICAL` (policy wins)
 
 ### 12.2 ETag and Cache Interaction
 
@@ -1576,11 +1578,11 @@ In multi-agent chains, `CRP-Agent-Safety-Budget` presented in a request from a s
 | Status | Condition | Required Headers |
 |--------|-----------|-----------------|
 | `200 OK` | Normal response | All applicable CRP headers |
-| `304 Not Modified` | ETag match — context not changed | `CRP-Context-ETag` |
+| `304 Not Modified` | ETag match â€” context not changed | `CRP-Context-ETag` |
 | `400 Bad Request` | Malformed Safety Policy, nonce mismatch | `CRP-Safety-Nonce` |
-| `401 Unauthorized` | Invalid or expired session token | — |
+| `401 Unauthorized` | Invalid or expired session token | â€” |
 | `424 Failed Dependency` | `only-if-ckf` set but CKF miss | `CRP-Context-Cache-Status: MISS` |
-| `451 Unavailable For Legal Reasons` | Safety policy halt — CRITICAL risk or UNACCEPTABLE EU AI Act class | `CRP-Safety-Hallucination-Risk`, `CRP-Safety-Retry-After`, `CRP-Compliance-Audit-Trail-URI` |
+| `451 Unavailable For Legal Reasons` | Safety policy halt â€” CRITICAL risk or UNACCEPTABLE EU AI Act class | `CRP-Safety-Hallucination-Risk`, `CRP-Safety-Retry-After`, `CRP-Compliance-Audit-Trail-URI` |
 | `503 Service Unavailable` | Minimum quality tier cannot be achieved | `CRP-Context-Quality-Tier` (max achievable) |
 
 ### 13.2 HTTP 451 Semantics
@@ -1609,7 +1611,7 @@ LLM outputs MUST NOT be parsed for CRP header values. All response headers are i
 
 ### 14.2 Session Token Security
 
-`CRP-Session-Token` values are cryptographically signed. Forged tokens will fail signature validation. Tokens with expired `expires_at` MUST be rejected with HTTP 401. See CRP-SPEC-015 §3.2.
+`CRP-Session-Token` values are cryptographically signed. Forged tokens will fail signature validation. Tokens with expired `expires_at` MUST be rejected with HTTP 401. See CRP-SPEC-015 Â§3.2.
 
 ### 14.3 Safety Policy Integrity
 
@@ -1617,7 +1619,7 @@ The `CRP-Safety-Policy` value MUST be validated for syntactic correctness per th
 
 ### 14.4 HMAC Chain Protection
 
-The HMAC chain key (used to generate `CRP-Provenance-HMAC`) MUST be stored securely and never transmitted in any CRP header. See CRP-SPEC-015 §3.1 for the complete HMAC specification.
+The HMAC chain key (used to generate `CRP-Provenance-HMAC`) MUST be stored securely and never transmitted in any CRP header. See CRP-SPEC-015 Â§3.1 for the complete HMAC specification.
 
 ---
 
@@ -1631,7 +1633,7 @@ CRP response headers carry metadata about AI calls and may indirectly reveal inf
 
 Implementors MUST consider the sensitivity of CRP response headers when making them available to browser-based clients. In particular, `CRP-Compliance-GDPR-PII` SHOULD be treated as sensitive and not exposed to JavaScript.
 
-The `CRP-Context-Cache: no-store` directive MUST be used for calls processing personal data to prevent persistence in the CKF. See CRP-SPEC-015 §6.
+The `CRP-Context-Cache: no-store` directive MUST be used for calls processing personal data to prevent persistence in the CKF. See CRP-SPEC-015 Â§6.
 
 ---
 
@@ -1639,29 +1641,29 @@ The `CRP-Context-Cache: no-store` directive MUST be used for calls processing pe
 
 ### 16.1 HTTP Field Name Registrations
 
-This document requests provisional registration of the following HTTP field names in the IANA HTTP Field Name Registry (per RFC 9110 §16.3). All fields share the following properties unless noted:
+This document requests provisional registration of the following HTTP field names in the IANA HTTP Field Name Registry (per RFC 9110 Â§16.3). All fields share the following properties unless noted:
 
 - **Applicable Protocol:** http
 - **Status:** provisional
 - **Author/Change Controller:** AutoCyber AI Pty Ltd <contact@crprotocol.io>
 - **Specification Document:** https://crprotocol.io/spec/headers/ (this document)
 
-**Priority registration set (10 headers — submit first):**
+**Priority registration set (10 headers â€” submit first):**
 
 | Field Name | Direction | Reference |
 |------------|-----------|-----------|
-| `CRP-Context-Quality-Tier` | Response | §4.1 |
-| `CRP-Safety-Hallucination-Risk` | Response | §5.1 |
-| `CRP-Provenance-HMAC` | Response | §6.1 |
-| `CRP-Compliance-EU-AI-Act` | Response | §7.1 |
-| `CRP-Safety-Policy` | Request | §5.12 |
-| `CRP-Agent-Safety-Budget` | Both | §8.3 |
-| `CRP-Set-Session` | Response | §10.1 |
-| `CRP-Context-ETag` | Response | §4.8 |
-| `CRP-Compliance-Audit-Trail-URI` | Response | §7.6 |
-| `CRP-Safety-Oversight-Mode` | Both | §5.10 |
+| `CRP-Context-Quality-Tier` | Response | Â§4.1 |
+| `CRP-Safety-Hallucination-Risk` | Response | Â§5.1 |
+| `CRP-Provenance-HMAC` | Response | Â§6.1 |
+| `CRP-Compliance-EU-AI-Act` | Response | Â§7.1 |
+| `CRP-Safety-Policy` | Request | Â§5.12 |
+| `CRP-Agent-Safety-Budget` | Both | Â§8.3 |
+| `CRP-Set-Session` | Response | Â§10.1 |
+| `CRP-Context-ETag` | Response | Â§4.8 |
+| `CRP-Compliance-Audit-Trail-URI` | Response | Â§7.6 |
+| `CRP-Safety-Oversight-Mode` | Both | Â§5.10 |
 
-**Full registration set:** All 58 headers defined in Sections 4–11.
+**Full registration set:** All 58 headers defined in Sections 4â€“11.
 
 ### 16.2 Well-Known URI Registration
 
@@ -1680,19 +1682,19 @@ This document requests registration of `/.well-known/crp-gateway.json` in the IA
 - [RFC9110] Fielding, R. et al., "HTTP Semantics"
 - [RFC2104] Krawczyk, H. et al., "HMAC: Keyed-Hashing for Message Authentication"
 - [RFC5869] Krawczyk, H. and P. Eronen, "HMAC-based Extract-and-Expand Key Derivation Function (HKDF)"
-- CRP-SPEC-001 — Core Protocol Specification
-- CRP-SPEC-003 — Context Envelope & Packing
-- CRP-SPEC-005 — Decision Provenance Engine
-- CRP-SPEC-006 — Safety Policy Directive Language
-- CRP-SPEC-007 — Session Token & State Relay
-- CRP-SPEC-008 — Dispatch Strategy Specification
-- CRP-SPEC-011 — Audit Trail & HMAC Chain
-- CRP-SPEC-015 — Security & Privacy
+- CRP-SPEC-001 â€” Core Protocol Specification
+- CRP-SPEC-003 â€” Context Envelope & Packing
+- CRP-SPEC-005 â€” Decision Provenance Engine
+- CRP-SPEC-006 â€” Safety Policy Directive Language
+- CRP-SPEC-007 â€” Session Token & State Relay
+- CRP-SPEC-008 â€” Dispatch Strategy Specification
+- CRP-SPEC-011 â€” Audit Trail & HMAC Chain
+- CRP-SPEC-015 â€” Security & Privacy
 
 ### Informative References
 
 - EU Regulation 2024/1689 (EU AI Act)
-- ISO/IEC 42001:2023 — Artificial Intelligence Management Systems
+- ISO/IEC 42001:2023 â€” Artificial Intelligence Management Systems
 - NIST AI RMF 1.0
 - EU Regulation 2016/679 (GDPR)
 - draft-rosenberg-aiproto-framework
@@ -1721,7 +1723,7 @@ This document requests registration of `/.well-known/crp-gateway.json` in the IA
 | CRP-Compliance-GDPR-PII | Compliance | RES | 7.3 | Recommended |
 | CRP-Compliance-ISO-42001 | Compliance | RES | 7.4 | Optional |
 | CRP-Compliance-NIST-Tier | Compliance | RES | 7.2 | Optional |
-| CRP-Context-Acceptance | Context | REQ | — | — |
+| CRP-Context-Acceptance | Context | REQ | â€” | â€” |
 | CRP-Context-Cache | Context | REQ | 4.10 | Optional |
 | CRP-Context-Cache-Status | Context | RES | 4.11 | Optional |
 | CRP-Context-Continuation-Id | Context | BOTH | 4.12 | Optional |
@@ -1772,4 +1774,4 @@ This document requests registration of `/.well-known/crp-gateway.json` in the IA
 
 ---
 
-*Copyright © 2025–2026 AutoCyber AI Pty Ltd. This specification text is licensed under Creative Commons Attribution 4.0 International (CC BY 4.0). The CRP™ name, CRP Comply™, CRP Gateway™, and CRP Visualise™ are trademarks of AutoCyber AI Pty Ltd. Implementation of this specification does not grant any trademark licence.*
+*Copyright Â© 2025â€“2026 AutoCyber AI Pty Ltd. This specification text is licensed under Creative Commons Attribution 4.0 International (CC BY 4.0). The CRPâ„¢ name, CRP Complyâ„¢, CRP Gatewayâ„¢, and CRP Visualiseâ„¢ are trademarks of AutoCyber AI Pty Ltd. Implementation of this specification does not grant any trademark licence.*
